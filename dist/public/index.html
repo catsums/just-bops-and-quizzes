@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	
+	<meta name="author" content="Cassim Chifamba-u19024895">
+	<meta name="application-name" content="Just Bops & Quizzes">
+
+	<!-- Favicons -->
+	<link rel="shortcut icon" sizes="64x64" type="image/x-icon" href="img/favicon/favicon.ico"/>
+	<link rel="shortcut icon" sizes="16x16 24x24" type="image/x-icon" href="img/favicon/favicon-16x16.png"/>
+	<link rel="shortcut icon" sizes="32x32 48x48" type="image/x-icon" href="img/favicon/favicon-32x32.png"/>
+	<link rel="apple-touch-icon" href="img/favicon/apple-touch-icon.png"/>
+	<link rel="android-chrome" href="img/favicon/android-chrome-192x192.png"/>
+
+	<!-- BootStrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous"/>
+	<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous"/> -->
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+	
+	<!-- My Stylesheets files -->
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+	<link rel="stylesheet" type="text/css" href="css/bstrap.css"/>
+	<link rel="stylesheet" type="text/css" href="css/myMouse.css"/>
+
+	<link rel="stylesheet" type="text/css" href="css/splash.css"/>
+
+	<title>Hello - Just Bops & Quizzes</title>
+	<style></style>
+</head>
+<body>
+	<div class="main-container container-fluid">
+		<div class="row py-2 m-0 h-100">
+
+			<div class="homeContainer col-sm-12 col-md mx-1 my-lg-3 ml-lg-3" id="containerL">
+				<div class="scrollAssist scrollUp"></div>
+				<div class="row h-25">
+					
+				</div>
+				<div class="row m-0 p-md-4 h-50">
+					<div class="col"></div>
+					<div class="splashLogo col-md-8 col-6 img-fluid"> </div>
+					<div class="col"></div>
+				</div>
+				<div class="songInfo row h-25">
+					<div class="col"></div>
+					<div class="col-1 songPlayButton"><i class="fas fa-play-circle"></i></div>
+					<div class="col-3 songArtistCol"></div>
+					<div class="col-1"> - </div>
+					<div class="col-3 songTitleCol"></div>
+					<div class="col"></div>
+				</div>
+				<div class="splashInfo row h-50"></div>
+				<div class="splashInfo row h-100">
+					<div class="col"></div>
+					<div class="col-9 splashInfo-Info mt-5">
+						<div class="row h-100 m-5">
+							<div class="col h-100">
+								<p>
+									Welcome to <strong>Just Quizzes and Beats!</strong> The country's first musical based quiz website! Play quizzes 
+									under the length and beat of a song by challenging your mind and your sense of rhythm. Do not worry though
+									even if you do not have any rhythm at all, you still have a chance to play casually while vibing to the 
+									songs that come with.
+									<hr/>
+								</p>
+								<p class="disclaimer">
+									NB: This is a project by <strong>Cassim Chifamba</strong> for IMY220 2021. All rights reserved. While Just Quizzes and Beats! 
+									parodies JSB by Berserk Studios, no copyrighted assets were used.
+								</p>
+							</div>
+						</div>
+						
+					</div>
+					<div class="col"></div>
+				</div>
+				<div class="scrollAssist scrollDown">Click here for more Info</div>
+			</div>
+
+			<div class="homeContainer col-sm-12 col-md m-1 my-lg-3 mr-lg-3" id="containerR">
+				<div class="row h-sm-10 h-md-30"></div>
+				<div class="row h-sm-10 mt-3 gy-5">
+					<div class="col-sm-1 col-md"></div>
+					<div class="col-sm col-md-9">
+						<form method="POST" id="signupForm">
+								<div class="row">
+									<div class="col-sm-6 col-md h4">
+										<p id="coolSplashText">Wanna get to try out <strong>cool quizzes <i class="fas fa-compact-disc"></i></strong> and listen to some <strong>sick beats <i class="fas fa-music"></i></strong> ? Join the club!</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-2 col-md-3">
+										<label class="formLbl inputLeftAlign" for="email">Email:</label>
+									</div>
+									<div class="col">
+										<input type="email" id="email" class="inputBox inputRightAlign form-control" placeholder="yourepic@email.com" name="email">
+									</div>
+									<div class="col-3">
+										<button type="submit" class="btn formBtn signUpBtn inputRightAlign"><span class="btnText signUpText">Sign Up!!</span> <i class="fas fa-play"></i></button>
+									</div>
+								</div>
+						</form>
+					</div>
+					<div class="col-sm-0 col-md"></div>
+				</div>
+				<div class="row h-20"></div>
+				<div class="row my-sm-0 my-lg-2 mx-3">
+					<div class="col alert formLog logg"> </div>
+				</div>
+				<div class="row h-20 my-5 py-5">
+					<div class="col"></div>
+					<div class="col-6 text-center">
+						<button class="btn formBtn goToLoginBtn"><span class="btnText">"I want to Log In"</span></button>
+					</div>
+					<div class="col"></div>
+				</div>
+				<div class="row h-40"></div>
+				<div class="splashLogIn h-100">
+					<div class="row py-5 h-25">
+						<div class="col"></div>
+						<div class="col-6 text-center align-middle">
+							<button class="btn formBtn goToSignupBtn"><span class="btnText">"Take me back to Sign Up"</span></button>
+						</div>
+						<div class="col"></div>
+					</div>
+					<div class="row h-0"></div>
+					<div class="row my-sm-0 my-lg-2 mx-3">
+						<div class="col alert formLog logg"> </div>
+					</div>
+					<div class="row py-sm-1 py-lg-2 h-50">
+						<div class="col"></div>
+						<div class="col-sm-12 col-lg-10 col-xl-9">
+							<form method="POST" id="loginForm">
+								<div class="row my-1 mx-1">
+									<div class="col-sm-2 col-md-3 mr-2">
+										<label class="formLbl inputLeftAlign" for="username">Username:</label>
+									</div>
+									<div class="col">
+										<input type="text" id="username" class="inputBox inputRightAlign form-control" name="username">
+									</div>
+								</div>
+								<div class="row my-1 mx-1">
+									<div class="col-sm-2 col-md-3 mr-2">
+										<label class="formLbl inputLeftAlign" for="password">Password:</label>
+									</div>
+									<div class="col">
+										<input type="password" id="password" class="inputBox inputRightAlign form-control" name="pass">
+									</div>
+								</div>
+								<div class="row my-sm-3 my-lg-5 mx-1">
+									<div class="col"></div>
+									<div class="col-6 text-center">
+										<div class="bopRing loginRing"></div>
+										<div class="h4">Log In!</div>
+									</div>
+									<div class="col"></div>
+								</div>
+							</form>
+						</div>
+						<div class="col"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div id="myMouse"></div>
+	<audio id="conductorAudio">
+		<source src="./data/audio/default.dat"/>
+	</audio>
+
+	<!-- jquery -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+	<!-- anime.js -->
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+
+	<!-- My Modules/Scripts -->
+	<script type="module" src="js/mainscript.js"></script>
+	<script type="module" src="js/myMouse.js"></script>
+	<script type="module" src="js/splash_script.js"></script>
+</body>
+</html>

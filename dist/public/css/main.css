@@ -1,0 +1,416 @@
+/*main.css*/
+@import url('https://fonts.googleapis.com/css2?family=Urbanist');
+@import url('https://fonts.cdnfonts.com/css/nexa-bold');
+@import url('https://fonts.cdnfonts.com/css/aharoni');
+/*
+@font-face{
+	font-family: 'Nexa';
+	src: url('fonts/Nexa Light.otf') format('otf');
+}
+@font-face{
+	font-family: 'Nexa';
+	font-weight: bold;
+	src: url('fonts/Nexa Bold.otf') format('otf');
+}*/
+/*@font-face{
+	font-family: 'Aharoni';
+	src: url('fonts/ahronbd.ttf') format('ttf');
+}*/
+
+:root{
+	/*FONTS*/
+	--f0: 'Nexa';
+	--f1: 'Urbanist';
+	--f2: 'Aharoni';
+
+	/*COLOURS*/
+	--cX: #050e1f;	/*dark-navy*/
+	--c0: #0d0029;	/*dark-purple*/
+	--c1: #70bfff;	/*azure blue*/
+	--c2: #ff2aa0;	/*pink*/
+	--c3: #9564ff;	/*purple/violet*/
+	--c4: #cbb3ff;	/*lavender/light purple*/
+	--c5: #ff97d0;	/*popurri/light pink*/
+	--c6: #181e34;	/*dark faded purple*/
+
+	--cA: #5099ff;	/*cyan blue*/
+	--cB: #ff717f;	/*red*/
+	--cC: #fffa71;	/*yellow*/
+	--cD: #71ff96;	/*green*/
+	--cE: #d671ff;	/*purple*/
+	--cF: #fe1685;	/*deep pink*/
+	/*PARTICLE COLORS*/
+	--pA: #a7cafc;	/*cyan blue*/
+	--pB: #ffb5bc;	/*red*/
+	--pC: #fcfabb;	/*yellow*/
+	--pD: #bbfccc;	/*green*/
+	--pE: #ebbaff;	/*purple*/
+	--pF: #ffadd4;	/*deep pink*/
+
+	--cI: var(--cA);
+	--pI: var(--pA);
+	/* SHAPES */
+	--sA: polygon(0 0,100% 0, 100% 100%, 0 100%);
+	--sB: circle(50% at 50% 50%);
+	--sC: polygon(0 0, 100% 50%, 0 100%);
+	--sD: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+	--sE: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+	--sF: polygon(52% 23%, 56% 14%, 67% 4%, 78% 0, 92% 5%, 100% 22%, 96% 44%, 85% 64%, 67% 85%, 50% 100%, 33% 85%, 15% 64%, 4% 44%, 0 22%, 8% 5%, 22% 0, 37% 4%, 46% 14%);
+	--sI: var(--sA);
+	/*SHAPE SCALES*/
+	--ssA: 18px;
+	--ssB: 20px;
+	--ssC: 23px;
+	--ssD: 23px;
+	--ssE: 28px;
+	--ssF: 22px;
+	--ssI: var(--ssA);
+}
+
+body {
+	font-family: var(--f0),Arial,sans-serif;
+	background-color: var(--cX);
+	color: var(--c1);
+	margin: 0 auto;
+	padding: 0;
+	width: 100vw; height: 100vh;
+	overflow: hidden;
+}
+
+h1,h2,h3,h4,h5,h6{
+	font-family: var(--f1),Aharoni,sans-serif;
+}
+
+.homeContainer{
+	padding: 0;
+	align-content: center;
+	border-radius: 20px;
+	background: url('../img/gradient bg.png');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+.main-container{
+	height: 100vh;
+}
+
+p strong{
+	color: var(--c2);
+}
+p em{
+	color: var(--c3);
+}
+
+label.formLbl{
+	font-family: var(--f1),Aharoni,sans-serif;
+	border: thin solid var(--c6);
+	background-color: var(--c0);
+	color: var(--c1);
+	padding: 12px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+label.inputLbl{
+	font-family: var(--f1),Aharoni,sans-serif;
+	border: thin solid var(--c1);
+	border-radius: 5px;
+	background-color: var(--c0);
+	color: var(--c1);
+	padding: 12px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+}
+.inputBox, .formTextarea, .formRadioBox, .formCheckBox{
+	border-style: solid;
+	border-radius: 5px;
+	border-color: var(--c6);
+	background-color: var(--c0);
+	color: var(--c4);
+	transition: transform 0.3s;
+}
+.inputBox:focus{
+	border-color: var(--c1);
+	background-color: var(--c0);
+	color: var(--c1);
+	transform: scale(1.025);
+}
+.formRadioContainer, .formCheckContainer{
+	position: relative;
+	transition: all 0.3s;
+}
+.formRadioBox, .formCheckBox{
+	display: flex;
+	position: absolute;
+	--thisPadding: 2pt;
+	top: 0;
+	left: 0;
+	width: calc(100% - var(--thisPadding));
+	height: calc(100% - var(--thisPadding));
+	transition: all 0.3s;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+.formRadioLabel, .formCheckLabel{
+	/*display: inline-block;*/
+	position: relative;
+	top: 0;
+	left: 0;
+	width: auto;
+	height: auto;
+	transition: all 0.3s;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+}
+/* On mouse-over */
+.formRadioContainer:hover input ~ .formRadioBox,
+.formCheckContainer:hover input ~ .formCheckBox,
+.formCheckContainer:hover input ~ .formRadioLabel,
+.formCheckContainer:hover input ~ .formCheckLabel{
+  background-color: var(--pI);
+  color: var(--cX);
+}
+
+/* When the radio button is checked */
+.formRadioContainer input:checked ~ .formRadioBox,
+.formCheckContainer input:checked ~ .formCheckBox,
+.formRadioContainer input:checked ~ .formRadioLabel,
+.formCheckContainer input:checked ~ .formCheckLabel{
+  background-color: var(--cI);
+  color: var(--cX);
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.formRadioBox:after, .formCheckBox:after{
+  text-align: center;
+  color: var(--c0);
+  font-weight: bold;
+  position: absolute;
+  display: none;
+}
+
+.formCheckBox:after{background-color: var(--c0);}
+.formRadioBox:after{background-color: var(--c0);}
+.formCheckLabel:after{background-color: var(--c0);}
+.formRadioLabel:after{background-color: var(--c0);}
+
+
+/* Show the indicator (dot/circle) when checked */
+.formRadioContainer input:checked ~ .formRadioBox:after, .formCheckContainer input:checked ~ .formCheckBox:after{
+  display: block;
+}
+/* Style the checkmark/indicator */
+.formRadioContainer .formRadioBox:after, .formCheckContainer .formCheckBox:after {
+  width: 80%; height: 80%;
+  border-radius: 4pt;
+  /*background: white;*/
+}
+.formTextarea:focus{
+	border-color: var(--c1);
+	background-color: var(--c0);
+	color: var(--c1);
+	transform: scale(1.01);
+}
+.inputBox:autofill, .formTextarea:autofill{
+	border-color: var(--c1);
+	background-color: var(--c2);
+	color: var(--c1);
+}
+.inputBox::placeholder, .formTextarea::placeholder{
+	color: var(--c5);
+}
+.formBtn{
+	border-color: var(--c6);
+	background-color: var(--c0);
+	color: var(--c1);
+	border-radius: 30px;
+	transition: transform 0.3s, color 0.2s, background-color 0.2s;
+}
+.formBtn:hover{
+	color: var(--c4);
+	transform: scale(1.15);
+}
+.formBtn:active{
+	color: var(--c0);
+	background-color: var(--c1);
+}
+.formLog{
+	border: thin solid var(--cX);
+	background-color: var(--c2);
+	color: var(--cX);
+	transition: all 0.3s;
+}
+.inputRightAlign{
+	border-radius: 20px;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	/*text-align: right;*/
+	justify-content: right;
+}
+.inputLeftAlign{
+	border-radius: 20px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	/*text-align: left;*/
+	justify-content: left;
+}
+
+.bopRing{
+	display: inline-block;
+	background: url('../img/bopRing.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.scrollUp{
+	top: 4%; left: inherit;
+}
+.scrollDown{
+	bottom: 4%; left: inherit;
+}
+
+#myMouse{
+	background-color: var(--cI);
+	clip-path: var(--sI);
+	width: var(--ssI); height: var(--ssI);
+}
+.mouseParticle{background-color: var(--pI);}
+.mouseClickCircle{border-color: var(--pI);}
+
+.bb{
+	border: thin solid green;
+}
+
+::-webkit-scrollbar{
+	width: 10px;
+}
+::-webkit-scrollbar-button{
+	background: var(--c3);
+	display: none;
+}
+/*::-webkit-scrollbar-button:vertical:start{
+	border-top-right-radius: 100%;
+}
+::-webkit-scrollbar-button:vertical:end{
+	border-bottom-right-radius: 100%;
+}*/
+::-webkit-scrollbar-button:hover{
+	background: var(--c1);
+}
+::-webkit-scrollbar-track{
+	/*background: green;*/
+}
+::-webkit-scrollbar-track-piece{
+	/*background: var(--c0);*/
+}
+::-webkit-scrollbar-thumb{
+	border-radius: 1em;
+	opacity: 0.2;
+	background: var(--c2);
+	width: 10px;
+	transition: all 0.5s;
+}
+::-webkit-scrollbar-thumb:active{
+	opacity: 1;
+	background: var(--c4);
+}
+::-webkit-scrollbar-corner{
+	/*background: cyan;*/
+}
+::-webkit-resizer{
+	/*background: orange;*/
+}
+
+.s-Square{
+	clip-path: var(--sSquare);
+	transform: scale(calc(18/18));
+	border-radius: 0;
+}
+.s-Circle{
+	clip-path: var(--sCircle);
+	transform: scale(calc(18/25));
+	border-radius: 0;
+}
+.s-Pentagon{
+	clip-path: var(--sPentagon);
+	transform: scale(calc(18/23));
+	border-radius: 0;
+}
+.s-Triangle{
+	clip-path: var(--sTriangle);
+	transform: scale(calc(18/20));
+	border-radius: 0;
+}
+.s-Star{
+	clip-path: var(--sStar);
+	transform: scale(calc(18/18));
+	border-radius: 0;
+}
+.s-Heart{
+	clip-path: var(--sHeart);
+	transform: scale(calc(18/23));
+	border-radius: 0;
+}
+
+
+.f0-txt{font-family: var(--f0),Calibri,sans-serif;}
+.f1-txt{font-family: var(--f1),Arial,sans-serif;}
+.f2-txt{font-family: var(--f2),Calibri,serif;}
+
+.cX-txt{color: var(--cX);}
+.c0-txt{color: var(--c0);}
+.c1-txt{color: var(--c1);}
+.c2-txt{color: var(--c2);}
+.c3-txt{color: var(--c3);}
+.c4-txt{color: var(--c4);}
+.c5-txt{color: var(--c5);}
+.c6-txt{color: var(--c6);}
+
+.cA-txt{color: var(--cA);}
+.cB-txt{color: var(--cB);}
+.cC-txt{color: var(--cC);}
+.cD-txt{color: var(--cD);}
+.cE-txt{color: var(--cE);}
+.cF-txt{color: var(--cF);}
+
+.cI-txt{color: var(--cI);}
+
+.cX-bg{background-color: var(--cX);}
+.c0-bg{background-color: var(--c0);}
+.c1-bg{background-color: var(--c1);}
+.c2-bg{background-color: var(--c2);}
+.c3-bg{background-color: var(--c3);}
+.c4-bg{background-color: var(--c4);}
+.c5-bg{background-color: var(--c5);}
+.c6-bg{background-color: var(--c6);}
+
+.cA-bg{background-color: var(--cA);}
+.cB-bg{background-color: var(--cB);}
+.cC-bg{background-color: var(--cC);}
+.cD-bg{background-color: var(--cD);}
+.cE-bg{background-color: var(--cE);}
+.cF-bg{background-color: var(--cF);}
+
+.cI-bg{background-color: var(--cI);}
+
+.cX-bd{border-color: var(--cX);}
+.c0-bd{border-color: var(--c0);}
+.c1-bd{border-color: var(--c1);}
+.c2-bd{border-color: var(--c2);}
+.c3-bd{border-color: var(--c3);}
+.c4-bd{border-color: var(--c4);}
+.c5-bd{border-color: var(--c5);}
+.c6-bd{border-color: var(--c6);}
+
+.cA-bd{border-color: var(--cA);}
+.cB-bd{border-color: var(--cB);}
+.cC-bd{border-color: var(--cC);}
+.cD-bd{border-color: var(--cD);}
+.cE-bd{border-color: var(--cE);}
+.cF-bd{border-color: var(--cF);}
+
+.cI-bd{border-color: var(--cI);}

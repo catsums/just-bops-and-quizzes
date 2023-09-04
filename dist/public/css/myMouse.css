@@ -1,0 +1,25 @@
+/* myMouse.css */
+
+.mouseParticle{
+	width: 5px;
+	height: 5px;
+	pointer-events: none;
+	background-color: #aaffff;
+	transition: left 0.5s, right 0.5s;
+	z-index: 9998;
+}
+.mouseClickCircle{
+	display: inline-block;
+	width: 0px; height: 0px;
+	border: medium solid #aaffff;
+	border-radius: 100%;
+	z-index: 9997;
+}
+#myMouse{
+	display: inline-block;
+	position: absolute;
+	pointer-events: none;
+	width: 18px; height: 18px;
+	background-color: #00c6f9;
+	z-index: 9999;
+}
