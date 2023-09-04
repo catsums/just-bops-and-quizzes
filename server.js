@@ -50,6 +50,7 @@ var MySystem = {
 //OUR VARIABLES AND HELPER FUNCTIONS
 const MY = require(path.resolve('./myNodeModules/myHelperFunctions.js'));
 const MAINVARS = require(path.resolve('./src/js/myMainVariables.js'));
+const CONFIG = require(path.resolve('./config.js'));
 
 //PROCESSING RUNNING ARGS
 process.argv.forEach(function (val, index, array) {
@@ -93,16 +94,16 @@ var syncTimerFlag = false;
 /// MONGODB ///
 
 const { MongoClient, ServerApiVersion } = mongodb;
-const uri = "mongodb+srv://catsums:7Z1WysOEFUr8cu8v@jbq-cluster.23tavft.mongodb.net/?retryWrites=true&w=majority";
+const uri = CONFIG.MongoDB.uri;
 const mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 //use env variables for these
 var dbOpts = {
 	uri: uri,
-	username: `catsums`,
-	pass: `7Z1WysOEFUr8cu8v`,
-	cluster: `jbq-cluster`,
-	dbName: `mydb`
+	username: CONFIG.MongoDB.username,
+	pass: CONFIG.MongoDB.pass,
+	cluster: CONFIG.MongoDB.cluster,
+	dbName: CONFIG.MongoDB.dbName,
 };
 
 // mongoClient.connect((err, db)=>{
