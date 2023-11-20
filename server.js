@@ -128,9 +128,9 @@ async function testDB(db, data={}){
 
 //use env variables for these
 cloudinary.config({ 
-  cloud_name: 'ddszrg1sy', 
-  api_key: '863452539323724', 
-  api_secret: 'rX75PSDGeePd6Ccxc-KA9cuRCZk' 
+  cloud_name: CONFIG.Cloudinary.cloud_name, 
+  api_key: CONFIG.Cloudinary.api_key, 
+  api_secret: CONFIG.Cloudinary.api_secret, 
 });
 
 //CREATE APP AND START SERVER
