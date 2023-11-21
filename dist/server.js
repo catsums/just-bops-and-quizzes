@@ -50,6 +50,7 @@
   //OUR VARIABLES AND HELPER FUNCTIONS
   const MY = require(path.resolve('./myNodeModules/myHelperFunctions.js'));
   const MAINVARS = require(path.resolve('./src/js/myMainVariables.js'));
+  const CONFIG = require(path.resolve('./config.js'));
 
   //PROCESSING RUNNING ARGS
   process.argv.forEach(function (val, index, array) {
@@ -97,7 +98,7 @@
     MongoClient,
     ServerApiVersion
   } = mongodb;
-  const uri = "mongodb+srv://catsums:7Z1WysOEFUr8cu8v@jbq-cluster.23tavft.mongodb.net/?retryWrites=true&w=majority";
+  const uri = CONFIG.MongoDB.uri;
   const mongoClient = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -107,10 +108,10 @@
   //use env variables for these
   var dbOpts = {
     uri: uri,
-    username: `catsums`,
-    pass: `7Z1WysOEFUr8cu8v`,
-    cluster: `jbq-cluster`,
-    dbName: `mydb`
+    username: CONFIG.MongoDB.username,
+    pass: CONFIG.MongoDB.pass,
+    cluster: CONFIG.MongoDB.cluster,
+    dbName: CONFIG.MongoDB.dbName
   };
 
   // mongoClient.connect((err, db)=>{
@@ -131,9 +132,9 @@
 
   //use env variables for these
   cloudinary.config({
-    cloud_name: 'ddszrg1sy',
-    api_key: '863452539323724',
-    api_secret: 'rX75PSDGeePd6Ccxc-KA9cuRCZk'
+    cloud_name: CONFIG.Cloudinary.cloud_name,
+    api_key: CONFIG.Cloudinary.api_key,
+    api_secret: CONFIG.Cloudinary.api_secret
   });
 
   //CREATE APP AND START SERVER
