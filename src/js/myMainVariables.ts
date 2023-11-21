@@ -20,17 +20,15 @@ var metadata = {
 	title : 'Site title',
 	description: `paste_here`,
 	url: 'expected_url',
-	image: '/public/img/index.png',
-	logo: '/public/img/dia.svg',
+	image: '/public/img/logoBG.png',
+	logo: '/public/img/logo.png',
 	color: '#FB6D93',
-	author: 'maaoindigo',
+	author: 'catsums',
 	appName: 'paste_here',
 	keywords: ['website'],
 	type: 'website',
 };
 
-let mainVars = {
+export {
 	metadata, settings, MyRecaptcha
 };
-
-module.exports = mainVars;
