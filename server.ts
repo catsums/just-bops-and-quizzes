@@ -1,34 +1,35 @@
-(async ()=>{
 
+	import path from 'path';
+	import http from 'http';
+	import fs from 'node:fs/promises';
+	import url from 'url';
+	// import events from 'events';
+	import express from "express";
+	import fetch from 'node-fetch';
+	import {Blob}  from 'fetch-blob';
+	// import ejs from 'ejs';
+	// import WebSocket from 'ws';
+	import { Socket } from 'socket.io-client';
+	import socketIO from 'socket.io';
+	// import {XMLHttpRequest} from 'xmlhttprequest';
+	import FileAPI from 'file-api';
+	// import querystring from 'querystring';
+	import jsonrepair from 'jsonrepair';
+	// import compression from 'compression';
+	// import helmet from 'helmet';
+	import cors from 'cors';
+	// import morgan from 'morgan';
+	import mongodb, { MongoClient } from 'mongodb';
+	import md5 from 'salted-md5';
+	import CRC32C from 'crc-32/crc32c';
+	import bodyParser from 'body-parser'; //for express body json and url parsing
+	import cloudinary from 'cloudinary';
 
-const
-	http = require('http'),
-	// fs = require('fs'),
-	fs = require('node:fs/promises'),
-	url = require('url'),
-	events = require('events'),
-	express = require("express"),
-	fetch = require('node-fetch'),
-	// {Blob} = await import('fetch-blob'),
-	// ejs = require('ejs'),
-	WebSocket = require('ws'),
-	socketIO = require('socket.io'),
-	XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest,
-	FileAPI = require('file-api'),
-	querystring = require('querystring'),
-	jsonrepair = require('jsonrepair'),
-	compression = require('compression'),
-	helmet = require('helmet'),
-	cors = require('cors'),
-	morgan = require('morgan'),
-	mongodb = require('mongodb'),
-	md5 = require('salted-md5'),
-	CRC32C = require('crc-32/crc32c'),
-	bodyParser = require('body-parser'), //for express body json and url parsing
-	cloudinary = require('cloudinary'),
-	path = require('path');
+	//OUR VARIABLES AND HELPER FUNCTIONS
+	import * as MY from '@catsums/my';
+	import * as MAINVARS from './src/js/myMainVariables'
+	import CONFIG from './config';
 
-const {Blob} = await import('fetch-blob');
 
 //Initialise File API
 var File = FileAPI.File;
@@ -36,7 +37,7 @@ var FileList = FileAPI.FileList;
 var FileReader = FileAPI.FileReader;
 
 //SERVER RUNTIME SETTINGS
-var FileProcess = {
+var FileProcess : any = {
 	nodePath : '',
 	filePath : '',
 	args : [],
@@ -47,10 +48,6 @@ var MySystem = {
 	dev: false
 };
 
-//OUR VARIABLES AND HELPER FUNCTIONS
-const MY = require(path.resolve('./myNodeModules/myHelperFunctions.js'));
-const MAINVARS = require(path.resolve('./src/js/myMainVariables.js'));
-const CONFIG = require(path.resolve('./config.js'));
 
 //PROCESSING RUNNING ARGS
 process.argv.forEach(function (val, index, array) {
@@ -93,9 +90,12 @@ var syncTimerFlag = false;
 
 /// MONGODB ///
 
-const { MongoClient, ServerApiVersion } = mongodb;
+const { ServerApiVersion } = mongodb;
 const uri = CONFIG.MongoDB.uri;
-const mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+// const mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const mongoClient = new MongoClient(uri, {
+	serverApi: ServerApiVersion.v1,
+});
 
 //use env variables for these
 var dbOpts = {
@@ -127,7 +127,7 @@ async function testDB(db, data={}){
 /// Cloudinary ///
 
 //use env variables for these
-cloudinary.config({ 
+cloudinary.v2.config({ 
   cloud_name: CONFIG.Cloudinary.cloud_name, 
   api_key: CONFIG.Cloudinary.api_key, 
   api_secret: CONFIG.Cloudinary.api_secret, 
@@ -144,7 +144,7 @@ var server = app.listen(defaultPort, function(){
 // var io = new socketIO.Server(server);
 
 var myUsers = {};
-var myClients = [];
+var myClients : any[] = [];
  
 //SERVE A STATIC PAGE IN THE PUBLIC DIRECTORY
 app.use(express.static("public"));
@@ -202,7 +202,11 @@ app.post('/xapi', async(req,res)=>{
 
 
 
-const dbObject = {
+const dbObject : {
+	client : MongoClient | null;
+	conn : MongoClient | null;
+	connected : boolean;
+} = {
 	client: null,
 	conn: null,
 	connected: false,
@@ -245,9 +249,9 @@ app.get('/files/:tagId',async(req,res)=>{
 		id: tag,
 	};
 
-	let result = null;
+	let result : any = null;
 
-	let db = null;
+	let db : mongodb.MongoClient | null = null;
 
 	try{
 		// db = await mongoClient.connect();
@@ -309,9 +313,9 @@ app.get('/files/images/:tagId',async(req,res)=>{
 		id: tag,
 	};
 
-	let result = null;
+	let result : any = null;
 
-	let db = null;
+	let db : MongoClient | null = null;
 
 	try{
 		// db = await mongoClient.connect();
@@ -376,9 +380,9 @@ app.get('/files/songs/:tagId',async(req,res)=>{
 		id: tag,
 	};
 
-	let result = null;
+	let result : any = null;
 
-	let db = null;
+	let db : MongoClient | null = null;
 
 	try{
 		// db = await mongoClient.connect();
@@ -454,9 +458,9 @@ app.post('/api', async(req,res)=>{
 		return;
 	}
 
-	let result = null;
+	let result : any = null;
 
-	let db = null;
+	let db : MongoClient | null = null;
 
 	try{
 		db = await mongoClientConnection();
@@ -699,12 +703,12 @@ try{
 					case 'create':
 						result = await createSong(db, reqData.data, res);
 						break;
-					case 'edit':
-						result = await editSong(db, reqData.data, res);
-						break;
-					case 'delete':
-						result = await deleteSong(db, reqData.data, res);
-						break;
+					// case 'edit':
+					// 	result = await editSong(db, reqData.data, res);
+					// 	break;
+					// case 'delete':
+					// 	result = await deleteSong(db, reqData.data, res);
+					// 	break;
 					
 					default:
 						res.status(501);
@@ -747,19 +751,19 @@ try{
 
 				switch(subType){
 					case 'addFriend':
-						result = await addFriend(db, reqData.data, reqData.id, res);
+						result = await addFriend(db, reqData.data, res);
 						break;
 					case 'removeFriend':
-						result = await removeFriend(db, reqData.data, reqData.id, res);
+						result = await removeFriend(db, reqData.data, res);
 						break;
 					case 'addFollow':
-						result = await addFollow(db, reqData.data, reqData.id, res);
+						result = await addFollow(db, reqData.data, res);
 						break;
 					case 'removeFollow':
-						result = await removeFollow(db, reqData.data, reqData.id, res);
+						result = await removeFollow(db, reqData.data, res);
 						break;
 					case 'addScore':
-						result = await addScore(db, reqData.data, reqData.id, res);
+						result = await addScore(db, reqData.data, res);
 						break;
 					default:
 						res.status(501);
@@ -785,13 +789,13 @@ try{
 
 				switch(subType){
 					case 'get':
-						result = await getActivity(db, reqData.data, reqData.id, res);
+						result = await getActivity(db, reqData.data, res);
 						break;
 					case 'getAll':
-						result = await getActivity(db, reqData.data, reqData.id, res, true);
+						result = await getActivity(db, reqData.data, res, true);
 						break;
 					case 'set':
-						result = await setActivity(db, reqData.data, reqData.id, res);
+						result = await setActivity(db, reqData.data, res);
 						break;
 					default:
 						res.status(501);
@@ -1000,14 +1004,14 @@ async function _getFile(db,data,resp,opts=null){
 
 		let fileData = res[0];
 
-		let fileBlob = null;
+		let fileBlob : any = null;
 
 		for(let _url of fileData.urls){
 			try{
 				let _res;
 
 				try{
-					_res = await fetch(_url);
+					_res = await fetch(_url, {});
 					fileBlob = await _res.blob();
 				}catch(err){ console.log('url');console.log(err); }
 
@@ -1075,7 +1079,7 @@ async function getFile(db, data, resp){
 	return response(false, 'Error in retrival info');
 }
 
-async function getFileBlob(db, data, resp, opts=null){
+async function getFileBlob(db, data, resp, opts : any = null){
 
 	if(!data?.name && !data.id){
 		resp.status(400);
@@ -1083,7 +1087,7 @@ async function getFileBlob(db, data, resp, opts=null){
 	}
 
 	try{
-		let res = await _getFile(db,data,resp,opts);
+		let res : any = await _getFile(db,data,resp,opts);
 
 		console.log({res});
 
@@ -1191,7 +1195,7 @@ async function createAPIKey(db, data, sKey, resp){
 	
 	try{
 		let apikey = md5(sKey, MY.randomString(8));
-		let id = MY.hash32(apikey);
+		let id = MY.hash32(apikey as string);
 
 		let query = {
 			id: id,
@@ -1213,10 +1217,10 @@ async function createAPIKey(db, data, sKey, resp){
 }
 
 async function checkUser(db, data, resp){
-	if((!'username' in data) && (!'id' in data)){
+	if(!('username' in data) || !('id' in data)){
 		return false;
 	}
-	if(!data?.username && !data?.id){
+	if(!data?.username || !data?.id){
 		return false;
 	}
 
@@ -1343,7 +1347,7 @@ async function loginUser(db, data, resp){
 	}
 
 	try{
-		let pipeline = [{
+		let pipeline : any[] = [{
 			$lookup:{
 				from: 'roles',
 				localField: 'roleID',
@@ -1367,7 +1371,7 @@ async function loginUser(db, data, resp){
 				let apiResObj = await createAPIKey(db,user, user.secrekey, resp);
 				if(!apiResObj?.success){
 					resp.status(400);
-					return response(false, `Login failed. Authentication had a problem. ${apikeyRes?.message}`);
+					return response(false, `Login failed. Authentication had a problem. ${apiResObj?.message}`);
 				}
 				user.apikey = apiResObj.data;
 				resp.status(200);
@@ -1398,8 +1402,8 @@ async function logoutUser(db, data, resp){
 	}
 
 	try{
-		let res = await db.db(dbOpts.dbName).collection('users')
-		.deleteOne({username: query.username});
+		let res = await db.db(dbOpts.dbName).collection('apikeys')
+		.deleteOne(query);
 
 		if(res.deletedCount){
 			resp.status(201);
@@ -1447,7 +1451,7 @@ async function getUser(db, data, resp, all=false){
 
 	try{
 
-		let pipeline = [{
+		let pipeline : any[] = [{
 			$lookup:{
 				from: 'roles',
 				localField: 'roleID',
@@ -1496,7 +1500,7 @@ async function editUser(db, data, resp, all=false){
 		return response(false,'Options are missing');
 	}
 
-	let query = {
+	let query : any = {
 		$or: [
 			{
 				username: data?.username
@@ -1539,7 +1543,7 @@ async function deleteUser(db, data, resp, all=false){
 		return response(false,'Username/Id is missing');
 	}
 
-	let query = {
+	let query : any = {
 		$or: [
 			{
 				username: data?.username
@@ -1553,7 +1557,7 @@ async function deleteUser(db, data, resp, all=false){
 		if(all) query = {};
 
 		let res = await db.db(dbOpts.dbName).collection('users')
-		deleteOne(query);
+		.deleteOne(query);
 
 		if(res.deletedCount){
 			try{
@@ -1579,7 +1583,7 @@ async function deleteUser(db, data, resp, all=false){
 	return response(false,'User could not be deleted. Error in credentials');
 }
 
-async function addScore(db, data, id, resp){
+async function addScore(db, data, resp){
 	if(!data?.score && data.score !== 0){
 		resp.status(400);
 		return response(false, `Score is missing`);
@@ -1589,7 +1593,7 @@ async function addScore(db, data, id, resp){
 		let currUser;
 
 		try{
-			let currUserRes = await getUser(db, {id:id},resp,true);
+			let currUserRes = await getUser(db, {id:data.id},resp,true);
 			if(!currUserRes?.success){
 				throw 'User does not exist';
 			}
@@ -1605,7 +1609,7 @@ async function addScore(db, data, id, resp){
 		let newScore = Number(initScore)+Number(updateScore);
 
 		let query = {
-			id: id
+			id: data.id
 		}
 
 		let opts = {
@@ -1631,7 +1635,7 @@ async function addScore(db, data, id, resp){
 }
 
 
-async function addFriend(db, data, id, resp){
+async function addFriend(db, data, resp){
 	if(!data?.id){
 		resp.status(400);
 		return response(false, `Id of potential friend is missing`);
@@ -1641,7 +1645,7 @@ async function addFriend(db, data, id, resp){
 		let currUser, otherUser;
 
 		try{
-			let _res = await getUser(db, {id:id},resp,true);
+			let _res = await getUser(db, {id:data.id},resp,true);
 			if(!_res?.success){
 				throw 'User does not exist';
 			}
@@ -1666,16 +1670,16 @@ async function addFriend(db, data, id, resp){
 			return response(false,'Could not add friend. Friend does not exist');
 		}
 
-		if(!isArray(currUser?.friendlist)){
+		if(!MY.isArray(currUser?.friendlist)){
 			currUser.friendlist = [];
 		}
-		if(!isArray(otherUser?.friendlist)){
+		if(!MY.isArray(otherUser?.friendlist)){
 			otherUser.friendlist = [];
 		}
 
 		if(!currUser.friendlist.includes(otherUser.id)){
-			MY.hardPush(currUser.friendlist,otherUser.id);
-			MY.hardPush(otherUser.friendlist,currUser.id);
+			currUser.friendlist.push(otherUser.id);
+			otherUser.friendlist.push(currUser.id);
 		}else{
 			resp.status(400);
 			return response(false,'This user is already your friend!');
@@ -1683,7 +1687,7 @@ async function addFriend(db, data, id, resp){
 	
 		let res0 = await db.db(dbOpts.dbName).collection('users')
 		.updateOne({
-			id: id
+			id: data.id
 		},{
 			$set:{
 				friendlist: currUser.friendlist
@@ -1716,7 +1720,7 @@ async function addFriend(db, data, id, resp){
     return response(false,'Friend could not be added because of an error.');
 }
 
-async function removeFriend(db, data, id, resp){
+async function removeFriend(db, data, resp){
 	if(!data?.id){
 		resp.status(400);
 		return response(false, `Id of potential friend is missing`);
@@ -1726,7 +1730,7 @@ async function removeFriend(db, data, id, resp){
 		let currUser, otherUser;
 
 		try{
-			let _res = await getUser(db, {id:id},resp,true);
+			let _res = await getUser(db, {id:data.id},resp,true);
 			if(!_res?.success){
 				throw 'User does not exist';
 			}
@@ -1751,10 +1755,10 @@ async function removeFriend(db, data, id, resp){
 			return response(false,'Could not unfriend. Friend does not exist');
 		}
 
-		if(!isArray(currUser?.friendlist)){
+		if(!MY.isArray(currUser?.friendlist)){
 			currUser.friendlist = [];
 		}
-		if(!isArray(otherUser?.friendlist)){
+		if(!MY.isArray(otherUser?.friendlist)){
 			otherUser.friendlist = [];
 		}
 
@@ -1768,7 +1772,7 @@ async function removeFriend(db, data, id, resp){
 	
 		let res0 = await db.db(dbOpts.dbName).collection('users')
 		.updateOne({
-			id: id
+			id: data.id
 		},{
 			$set:{
 				friendlist: currUser.friendlist
@@ -1801,7 +1805,7 @@ async function removeFriend(db, data, id, resp){
     return response(false,'Friend could not be removed because of an error.');
 }
 
-async function addFollow(db, data, id, resp){
+async function addFollow(db, data, resp){
 	if(!data?.id){
 		resp.status(400);
 		return response(false, `Id of potential follower is missing`);
@@ -1811,7 +1815,7 @@ async function addFollow(db, data, id, resp){
 		let currUser, otherUser;
 
 		try{
-			let _res = await getUser(db, {id:id},resp,true);
+			let _res = await getUser(db, {id:data.id},resp,true);
 			if(!_res?.success){
 				throw 'User does not exist';
 			}
@@ -1836,16 +1840,16 @@ async function addFollow(db, data, id, resp){
 			return response(false,'Could not add user. Friend does not exist');
 		}
 
-		if(!isArray(currUser?.following)){
+		if(!MY.isArray(currUser?.following)){
 			currUser.following = [];
 		}
-		if(!isArray(otherUser?.followers)){
+		if(!MY.isArray(otherUser?.followers)){
 			otherUser.followers = [];
 		}
 
 		if(!currUser.following.includes(otherUser.id)){
-			MY.hardPush(currUser.following,otherUser.id);
-			MY.hardPush(otherUser.followers,currUser.id);
+			currUser.friendlist.push(otherUser.id);
+			otherUser.friendlist.push(currUser.id);
 		}else{
 			resp.status(400);
 			return response(false,'You already follow this user!');
@@ -1853,7 +1857,7 @@ async function addFollow(db, data, id, resp){
 	
 		let res0 = await db.db(dbOpts.dbName).collection('users')
 		.updateOne({
-			id: id
+			id: data.id
 		},{
 			$set:{
 				following: currUser.following
@@ -1887,7 +1891,7 @@ async function addFollow(db, data, id, resp){
 }
 
 
-async function removeFollow(db, data, id, resp){
+async function removeFollow(db, data, resp){
 	if(!data?.id){
 		resp.status(400);
 		return response(false, `Id of potential friend is missing`);
@@ -1897,7 +1901,7 @@ async function removeFollow(db, data, id, resp){
 		let currUser, otherUser;
 
 		try{
-			let _res = await getUser(db, {id:id},resp,true);
+			let _res = await getUser(db, {id:data.id},resp,true);
 			if(!_res?.success){
 				throw 'User does not exist';
 			}
@@ -1922,10 +1926,10 @@ async function removeFollow(db, data, id, resp){
 			return response(false,'Could not remove user. Friend does not exist');
 		}
 
-		if(!isArray(currUser?.following)){
+		if(!MY.isArray(currUser?.following)){
 			currUser.following = [];
 		}
-		if(!isArray(otherUser?.followers)){
+		if(!MY.isArray(otherUser?.followers)){
 			otherUser.followers = [];
 		}
 
@@ -1939,7 +1943,7 @@ async function removeFollow(db, data, id, resp){
 	
 		let res0 = await db.db(dbOpts.dbName).collection('users')
 		.updateOne({
-			id: id
+			id: data.id
 		},{
 			$set:{
 				following: currUser.following
@@ -2001,6 +2005,8 @@ async function createQuiz(db, data, resp){
 			passingGrade: data?.passingGrade || 1,
 		};
 
+		console.log(query);
+
 		let res = await db.db(dbOpts.dbName).collection('quizzes')
 		.insertOne(query);
 
@@ -2014,6 +2020,39 @@ async function createQuiz(db, data, resp){
 
 	resp.status(400);
 	return response(false, 'Invalid Quiz Data');
+}
+
+async function checkQuiz(db, data, resp){
+	if(!('id' in data)){
+		return false;
+	}
+	if(!data?.id){
+		return false;
+	}
+
+	let query = {
+		$or : [
+			{
+				id: data?.id||''
+			},
+		],
+	}
+
+	console.log({checkQuery:query})
+	console.log(query)
+
+	try{
+		let res = await db.db(dbOpts.dbName).collection('quizzes')
+		.find(query).toArray();
+
+		if(res.length){
+			return true;
+		}
+	}catch(err){
+		console.log(err);
+	}
+	return false;
+	
 }
 
 async function getQuiz(db, data, resp, all=false){
@@ -2049,7 +2088,7 @@ async function getQuiz(db, data, resp, all=false){
 
 	try{
 
-		let pipeline = [{
+		let pipeline : any[] = [{
 			$lookup:{
 				from: 'users',
 				localField: 'userID',
@@ -2098,7 +2137,7 @@ async function editQuiz(db, data, resp, all=false){
 		return response(false,'Options are missing');
 	}
 
-	let query = {
+	let query : any = {
 		$or: [
 			{
 				name: data?.name
@@ -2116,7 +2155,7 @@ async function editQuiz(db, data, resp, all=false){
 		if(all) query = {};
 
 		let res = await db.db(dbOpts.dbName).collection('quizzes')
-		updateOne(query, opts);
+		.updateOne(query, opts);
 
 		if(res.modifiedCount && res.matchedCount){
 			resp.status(200);
@@ -2141,7 +2180,7 @@ async function deleteQuiz(db, data, resp, all=false){
 		return response(false,'Quiz Name/Id is missing');
 	}
 
-	let query = {
+	let query : any = {
 		$or: [
 			{
 				username: data?.username
@@ -2155,7 +2194,7 @@ async function deleteQuiz(db, data, resp, all=false){
 		if(all) query = {};
 
 		let res = await db.db(dbOpts.dbName).collection('quizzes')
-		deleteOne(query);
+		.deleteOne(query);
 
 		if(res.deletedCount){
 			resp.status(201);
@@ -2211,6 +2250,41 @@ async function createList(db, data, resp){
 	return response(false, 'Invalid List Data');
 }
 
+
+async function checkList(db, data, resp){
+	if(!('id' in data)){
+		return false;
+	}
+	if(!data?.id){
+		return false;
+	}
+
+	let query = {
+		$or : [
+			{
+				id: data?.id||''
+			},
+		],
+	}
+
+	console.log({checkQuery:query})
+	console.log(query)
+
+	try{
+		let res = await db.db(dbOpts.dbName).collection('lists')
+		.find(query).toArray();
+
+		if(res.length){
+			return true;
+		}
+	}catch(err){
+		console.log(err);
+	}
+	return false;
+	
+}
+
+
 async function getList(db, data, resp, all=false){
 
 	let query = {};
@@ -2243,7 +2317,7 @@ async function getList(db, data, resp, all=false){
 	}
 
 	try{
-		let pipeline = [{
+		let pipeline : any = [{
 			$lookup:{
 				from: 'users',
 				localField: 'userID',
@@ -2292,7 +2366,7 @@ async function editList(db, data, resp, all=false){
 		return response(false,'Options are missing');
 	}
 
-	let query = {
+	let query : any = {
 		$or: [
 			{
 				name: data?.name
@@ -2310,7 +2384,7 @@ async function editList(db, data, resp, all=false){
 		if(all) query = {};
 
 		let res = await db.db(dbOpts.dbName).collection('lists')
-		updateOne(query, opts);
+		.updateOne(query, opts);
 
 		if(res.modifiedCount && res.matchedCount){
 			resp.status(200);
@@ -2335,7 +2409,7 @@ async function deleteList(db, data, resp, all=false){
 		return response(false,'List Name/Id is missing');
 	}
 
-	let query = {
+	let query : any = {
 		$or: [
 			{
 				username: data?.username
@@ -2349,7 +2423,7 @@ async function deleteList(db, data, resp, all=false){
 		if(all) query = {};
 
 		let res = await db.db(dbOpts.dbName).collection('lists')
-		deleteOne(query);
+		.deleteOne(query);
 
 		if(res.deletedCount){
 			resp.status(201);
@@ -2410,6 +2484,41 @@ async function createSong(db, data, resp){
 	return response(false, 'Invalid Song Data');
 }
 
+
+async function checkSong(db, data, resp){
+	if(!('id' in data)){
+		return false;
+	}
+	if(!data?.id){
+		return false;
+	}
+
+	let query = {
+		$or : [
+			{
+				id: data?.id||''
+			},
+		],
+	}
+
+	console.log({checkQuery:query})
+	console.log(query)
+
+	try{
+		let res = await db.db(dbOpts.dbName).collection('songs')
+		.find(query).toArray();
+
+		if(res.length){
+			return true;
+		}
+	}catch(err){
+		console.log(err);
+	}
+	return false;
+	
+}
+
+
 async function getSong(db, data, resp, all=false){
 
 	console.log({data});
@@ -2444,7 +2553,7 @@ async function getSong(db, data, resp, all=false){
 	}
 
 	try{
-		let pipeline = [{
+		let pipeline : any[] = [{
 			$lookup:{
 				from: 'users',
 				localField: 'userID',
@@ -2580,7 +2689,13 @@ function encryptPassword(data){
 	return `${CRC32C.str(`${data?.pass}`)}${CRC32C.str(`${data?.username}${_SALT}`)}`;
 }
 
-function response(s=false,m='',d=null){
+interface IResponse {
+	success : boolean;
+	message : string;
+	data : any;
+}
+
+function response(s=false,m='',d:any=null) : IResponse{
 	return {
 		success: s,
 		message: m,
@@ -2625,7 +2740,7 @@ ExpressApp.routes.forEach((val)=>{
 
 		let urlParams = MY.parseURLParams(req.url);
 
-		let viewData = {
+		let viewData : any = {
 			local:{}
 		};
 		if(urlParams){
@@ -2662,13 +2777,13 @@ ExpressApp.routes.forEach((val)=>{
 
 var io = new socketIO.Server(server);
 
-io.getUniqueID = function () {
+const getUniqueID = function () {
   return MY.hexadecimalID() + MY.hexadecimalID() + '-' + MY.hexadecimalID();
 };
 
 io.on('connection', (socket)=>{
-	socket.detail = {
-		id: io.getUniqueID(),
+	socket.data = {
+		id: getUniqueID(),
 		key:'', username: '',
 		url: '', new: true,
 		sync:{
@@ -2676,16 +2791,18 @@ io.on('connection', (socket)=>{
 		},
 		startTime:new Date(),
 	};
-	// myClients.push(socket);
-	MY.hardPush(myClients,socket);
-	updateClients();
+
+	if(!myClients.find(s => s.id == socket.id)) {
+		myClients.push(socket);
+		updateClients();
+	}
 
 	let socketFunctions = {
 		sync:(req)=>{
 			// socket.key = data.key;
-			socket.detail.username = req.data?.username?req.data.username:'Guest';
-			socket.detail.url = req.data?.url?req.data.url:'/';
-			socket.detail.sync.time = new Date();
+			socket.data.username = req.data?.username?req.data.username:'Guest';
+			socket.data.url = req.data?.url?req.data.url:'/';
+			socket.data.sync.time = new Date();
 			// console.log(req.data);
 			let res = {
 				data : {
@@ -2696,9 +2813,9 @@ io.on('connection', (socket)=>{
 					}
 				}
 			};
-			if(socket.detail.new){
-				socket.detail.new = false;
-				console.log('New Client: '+socket.detail.id+' - '+ (socket.detail.username ? socket.detail.username : 'Guest') );
+			if(socket.data.new){
+				socket.data.new = false;
+				console.log('New Client: '+socket.data.id+' - '+ (socket.data.username ? socket.data.username : 'Guest') );
 			}
 			return res;
 			
@@ -2727,8 +2844,8 @@ io.on('connection', (socket)=>{
 	});
 
 	socket.on('disconnect',()=>{
-		console.log('A client disconnected: '+socket.detail.id);
-		myClients.splice(MY.findIndexID(socket.detail.id,myClients));
+		console.log('A client disconnected: '+socket.data.id);
+		myClients.splice(myClients.indexOf(socket));
 		updateClients();
 	});
 });
@@ -2747,10 +2864,10 @@ function updateClients(){
 	};
 	// MY.clog(dat);
 	for(var i=0;i<myClients.length;i++){
-		var cl = myClients[i];
+		var cl = myClients[i] as Socket;
 		/*if(cl.new){
 			cl.new = false;
-			console.log('New Client: '+cl.detail.id+' - '+ (cl.detail.username!='' ? cl.detail.username : 'Guest') );
+			console.log('New Client: '+cl.data.id+' - '+ (cl.data.username!='' ? cl.data.username : 'Guest') );
 		}*/
 		cl.emit('sync',JSON.stringify(dat));
 	}
@@ -2805,7 +2922,7 @@ function updateClients(){
 //		 var cl = myClients[i];
 //		 /*if(cl.new){
 //			 cl.new = false;
-//			 console.log('New Client: '+cl.detail.id+' - '+ (cl.detail.username!='' ? cl.detail.username : 'Guest') );
+//			 console.log('New Client: '+cl.data.id+' - '+ (cl.data.username!='' ? cl.data.username : 'Guest') );
 //		 }*/
 //		 cl.emit('sync',JSON.stringify(dat));
 //	 }
@@ -2816,12 +2933,12 @@ async function getBase64(file) {
 	return new Promise((res,rej)=>{
 		let reader = new FileReader();
 		
-		reader.onload = ()=>{
+		reader.on('load',()=>{
 			return res(reader.result);
-		};
-		reader.onerror = (err)=>{
+		});
+		reader.on('error',(err)=>{
 			rej(err);
-		};
+		});
 		reader.readAsDataURL(file);
 	});
 }
@@ -2838,7 +2955,7 @@ function switchPort(s, p){
 }
 
 
-function syncTimer(seconds){
+function syncTimer(seconds : number){
 	if(seconds<=0.01) seconds = 10;
 	if(seconds>=360) seconds = 359.99;
 	if(!syncTimerFlag){
@@ -2853,25 +2970,25 @@ function syncTimer(seconds){
 	}
 }
 
-function AJAX(jsonData,callback,url){
-	var req = new XMLHttpRequest();
-	req.onreadystatechange = function()
-	{
-		if(req.readyState == 4){
-			if(req.status == 200){
-				var json = JSON.parse(req.responseText);
-				callback(json);
-			}
-		}
-		else{
-			console.log(req.readyState);
-		}
+// function AJAX(jsonData,callback,url){
+// 	var req = new XMLHttpRequest();
+// 	req.onreadystatechange = function()
+// 	{
+// 		if(req.readyState == 4){
+// 			if(req.status == 200){
+// 				var json = JSON.parse(req.responseText);
+// 				callback(json);
+// 			}
+// 		}
+// 		else{
+// 			console.log(req.readyState);
+// 		}
 		
-	};
-	req.open("GET",url,true);
-	req.setRequestHeader('Content-Type', 'application/json');
-	req.send(JSON.stringify(jsonData));
-}
+// 	};
+// 	req.open("GET",url, true, null, null);
+// 	req.setRequestHeader('Content-Type', 'application/json');
+// 	req.send(JSON.stringify(jsonData));
+// }
 
 function getRequestURL(req){
 	var hostname = req?.headers?.host;
@@ -2911,6 +3028,3 @@ function toObject() {
 		  : value // return everything else unchanged
   ));
 }
-
-
-})();
