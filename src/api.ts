@@ -17,7 +17,8 @@ import cloudinary from 'cloudinary';
 //OUR VARIABLES AND HELPER FUNCTIONS
 import * as MY from '@catsums/my';
 import * as MAINVARS from './myMainVariables'
-import * as CONFIG from '../etc/secrets/config';
+
+const CONFIG = require(path.resolve('/etc/secrets/config.ts'));
 
 /// MONGODB ///
 
