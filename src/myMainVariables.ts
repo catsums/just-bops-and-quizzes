@@ -1,8 +1,8 @@
 ///myMainVariables
-var settings = {
+let settings = {
 
 }
-var MyRecaptcha = {
+let MyRecaptcha = {
 	V2:{
 		key: {
 			private: `paste_here`,
@@ -16,7 +16,7 @@ var MyRecaptcha = {
 		},
 	},
 };
-var metadata = {
+let metadata = {
 	title : 'Site title',
 	description: `paste_here`,
 	url: 'expected_url',
