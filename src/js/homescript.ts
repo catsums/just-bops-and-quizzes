@@ -1,5 +1,7 @@
 /*homescript.js*/
 
+import $ from "jquery";
+import anime from 'animejs';
 import { Conductor } from '@catsums/conductorjs';
 import {
 	docReady,  hardPush, defectAllFormSubmits,
@@ -12,7 +14,6 @@ import {
 	rndInt, randomID, randomString, randomId,
 	findItemObjectIndex
 } from '@catsums/my';
-import * as MyMouse from './myMouse.js';
 import {
 	displayPopUpBox, deletePopUp, easyPopUpBox,
 	logg, 
@@ -21,16 +22,14 @@ import {
 	myAPI, myHandler,
 	saveActivity, getActivity,
 	transitionTo,
-} from './mainscript.js';
+} from './mainscript';
 
-import $ from "jquery";
-import anime from 'animejs';
 
 var conductor : Conductor; 
 var startLobby = false; 
 var songIsPlay = false;
-var homeAudio; 
-var editAudio;
+var homeAudio : HTMLAudioElement; 
+var editAudio : HTMLAudioElement;
 
 var holdDown : {
 	timer: number | null,
@@ -68,6 +67,7 @@ function main(){
 			}).then((res)=>{
 				if(res.success){
 					let uData = res.data as IUserData;
+
 					$('.pfp').css({
 						'background-image':`url('/files/images/${uData?.imageURL||`defImage`}')`,
 						'background-position':`center`, 'background-size':`cover`,
@@ -299,6 +299,7 @@ function createConductor(){
 		$('#myMouse')[0]
 	]);
 
+	conductor.activate();
 }
 async function retrievePlaylist(){
 	return myHandler({
@@ -321,7 +322,8 @@ async function retrievePlaylist(){
 	});
 }
 function playDefaultSong() {
-	var currSong = {
+	var currSong : ISongData = {
+		id: '',
 		title: 'Gizmo',
 		author: 'Syn Cole',
 		bpm: 124,
@@ -364,7 +366,7 @@ function playPlaylist(pID : string, qID : string){
 }
 
 
-$('#myMouse').on('beatHit',(event:any)=>{
+$('#myMouse').on('beatHit',(event:Event)=>{
 	let e = event as CustomEvent;
 
 	var myMouse = e.currentTarget;
@@ -383,7 +385,9 @@ function verifyLogin(callback){
 	// var apikey = localStorage.getItem('JBQ_apikey');
 
 	myHandler({
-		type:'verify',data:{id:userID}
+		type:'verify',data:{
+			id:userID
+		}
 	},(msg,data)=>{
 		console.log(data);
 		console.log(msg);
@@ -471,11 +475,13 @@ async function searchForCriteria(_criteria){
 	};
 	return myHandler({
 		type:'quiz',subType:'getAll',data:{
-			id:userID
+			// id:userID
 		}
 	}).then((res)=>{
+		console.log({res, allData});
 		if(res.success){
 			allData.quizzes = res.data as IQuizData[];
+
 			for(let _q of allData.quizzes){
 				if(( String(_q.name).toLowerCase().includes(_criteria) )
 					|| ( String(_q.description).toLowerCase().includes(_criteria) )
@@ -488,11 +494,12 @@ async function searchForCriteria(_criteria){
 		}
 		return myHandler({
 			type:'user',subType:'getAll',data:{
-				id:userID
+				// id:userID
 			}
 		}).then((res)=>{
 			if(res.success){
 				allData.users = res.data as IUserData[];
+
 				for(let _q of allData.users){
 					if(( String(_q.firstname).toLowerCase().includes(_criteria) )
 						|| ( String(_q.lastname).toLowerCase().includes(_criteria) )
@@ -506,11 +513,12 @@ async function searchForCriteria(_criteria){
 			}
 			return myHandler({
 				type:'list',subType:'getAll',data:{
-					id:userID
+					// id:userID
 				}
 			}).then((res)=>{
 				if(res.success){
 					allData.lists = res.data as IPlaylistData[];
+
 					for(let _q of allData.lists){
 						if(( String(_q.name).toLowerCase().includes(_criteria) )
 							|| ( String(_q.description).toLowerCase().includes(_criteria) ))
@@ -528,13 +536,17 @@ async function searchForCriteria(_criteria){
 async function retrieveMyQuizzes(){
 	var userID = localStorage.getItem('JBQ_userId');
 	return myHandler({
-		type:'quiz',subType:'get',data:{userID:userID}
+		type:'quiz',subType:'getAll',data:{userID:userID}
 	},(msg,data)=>{
-		data = JSON.parse(JSON.stringify(data));
+		if(isString(data) && isJSON(data)){
+			data = JSON.parse(data as string);
+		}
+		
 		var quizArr = data as IQuizData[];
 		if(!$('.menuContainer').find('.cardContainer').length){
 			$('.menuContainer').append($('<div>',{class:'cardContainer'}));
 		}
+		console.log({quizArr})
 		for(var quiz of quizArr){
 			addQuizToDOM(quiz);
 		}
@@ -560,13 +572,18 @@ async function retrieveMyQuizzes(){
 async function retrieveQuizzes(){
 	var userID = localStorage.getItem('JBQ_userId');
 	return myHandler({
-		type:'quiz',subType:'getAll',data:{userID:userID}
+		type:'quiz',subType:'getAll',data:{
+			// userID:userID
+		}
 	},(msg,data)=>{
-		data = JSON.parse(JSON.stringify(data));
+		if(isString(data) && isJSON(data)){
+			data = JSON.parse(data as string);
+		}
 		var quizArr = data as IQuizData[];
 		if(!$('.menuContainer').find('.cardContainer').length){
 			$('.menuContainer').append($('<div>',{class:'cardContainer'}));
 		}
+		console.log({quizArr})
 		for(var quiz of quizArr){
 			addQuizToDOM(quiz);
 		}
@@ -594,9 +611,13 @@ async function retrieveQuizzes(){
 async function retrieveMyLists(){
 	var userID = localStorage.getItem('JBQ_userId');
 	return myHandler({
-		type:'list',subType:'get',data:{userID:userID}
+		type:'list',subType:'get',data:{
+			userID:userID
+		}
 	},(msg,data)=>{
-		data = JSON.parse(JSON.stringify(data));
+		if(isString(data) && isJSON(data)){
+			data = JSON.parse(data as string);
+		}
 		var listArr = data as IPlaylistData[];
 		if(!$('.menuContainer').find('.cardContainer').length){
 			$('.menuContainer').append($('<div>',{class:'cardContainer'}));
@@ -621,13 +642,18 @@ async function retrieveMyLists(){
 async function retrieveLists(){
 	var userID = localStorage.getItem('JBQ_userId');
 	return myHandler({
-		type:'list',subType:'getAll',data:{userID:userID}
+		type:'list',subType:'getAll',data:{
+			// userID:userID
+		}
 	},(msg,data)=>{
-		data = JSON.parse(JSON.stringify(data));
+		if(isString(data) && isJSON(data)){
+			data = JSON.parse(data as string);
+		}
 		var listArr = data as IPlaylistData[];
 		if(!$('.menuContainer').find('.cardContainer').length){
 			$('.menuContainer').append($('<div>',{class:'cardContainer'}));
 		}
+		console.log({listArr})
 		for(var list of listArr){
 			addListToDOM(list);
 		}
@@ -649,7 +675,9 @@ async function addFriend(uID){
 	let userID = localStorage.getItem('JBQ_userId');
 	let apikey = localStorage.getItem('JBQ_apikey');
 	return myHandler({
-		type:'connect',subType:'addFriend',data:{id:uID}
+		type:'connect',subType:'addFriend',data:{
+			id:uID
+		}
 	},(msg,data)=>{
 		easyPopUpBox(msg);
 		showUserDetail(uID);
@@ -658,7 +686,7 @@ async function addFriend(uID){
 		easyPopUpBox(msg);
 	},(err,data)=>{
 		easyPopUpBox(err);
-	}).then((res)=>{
+	}).then((res:IResponse)=>{
 		// let _friend = JSON.parse(res.data);
 		let _friend = (res.data as IUserData);
 		saveActivity({
@@ -688,7 +716,9 @@ async function removeFriend(uID){
 	let userID = localStorage.getItem('JBQ_userId');
 	let apikey = localStorage.getItem('JBQ_apikey');
 	return myHandler({
-		type:'connect',subType:'removeFriend',data:{id:uID}
+		type:'connect',subType:'removeFriend',data:{
+			id:uID
+		}
 	},(msg,data)=>{
 		easyPopUpBox(msg);
 		showUserDetail(uID);
@@ -705,7 +735,9 @@ async function addFollow(uID){
 	let userID = localStorage.getItem('JBQ_userId');
 	let apikey = localStorage.getItem('JBQ_apikey');
 	return myHandler({
-		type:'connect',subType:'addFollow',data:{id:uID}
+		type:'connect',subType:'addFollow',data:{
+			id:uID
+		}
 	},(msg,data)=>{
 		easyPopUpBox(msg);
 		showUserDetail(uID);
@@ -745,7 +777,9 @@ async function removeFollow(uID){
 	let userID = localStorage.getItem('JBQ_userId');
 	let apikey = localStorage.getItem('JBQ_apikey');
 	return myHandler({
-		type:'connect',subType:'removeFollow',data:{id:uID}
+		type:'connect',subType:'removeFollow',data:{
+			id:uID
+		}
 	},(msg,data)=>{
 		easyPopUpBox(msg);
 		showUserDetail(uID);
@@ -797,7 +831,9 @@ function showUserDetail(uID:string){
 	
 	
 	myHandler({
-		type:'user',subType:'get',data:{id:uID}
+		type:'user',subType:'get',data:{
+			id:uID
+		}
 	},(msg,hdata)=>{
 		console.log({hdata});
 		var userData = hdata as IUserData;
@@ -989,7 +1025,9 @@ function showUserDetail(uID:string){
 					}
 				);
 				myHandler({
-					type:'user',subType:'get',data:{id:uID}
+					type:'user',subType:'get',data:{
+						id:uID
+					}
 				},(msg,ndata)=>{
 					data.userData = ndata;
 					data.userPref = {
@@ -1145,7 +1183,7 @@ function showUserDetail(uID:string){
 							
 						}
 
-						$('.userShapeElem').on('beatHit',(event:any)=>{
+						$('.userShapeElem').on('beatHit',(event:Event)=>{
 							let e = event as CustomEvent;
 							anime({
 								targets: [e.currentTarget],
@@ -1786,7 +1824,7 @@ function showListDetail(lID : string){
 					id:data.lData.id,
 				}},(msg,ldata)=>{
 					data.lData = ldata;
-					data.thisListQuizzes = JSON.parse(data.lData.quizzes);
+					data.thisListQuizzes = (data.lData.quizzes);
 				},(msg,qdata)=>{
 					data.playlistDivCont.html(
 						$('<div>',{class:'listMenuContainer h-100'}).append(
@@ -2061,6 +2099,7 @@ function showQuizDetail(qID : string){
 		id:qID
 	}},(msg,qdata)=>{
 		var qData = qdata as IQuizData;
+		console.log({qData})
 		var divQuizMenuContainer = $('<div>',{class:'quizMenuContainer h-100'})
 		.append(
 			$('<div>',{class:'card my-1 mx-5 quizCard h-80'}).append([
@@ -2126,7 +2165,7 @@ function showQuizDetail(qID : string){
 					id:data.qData.id,
 				}},(msg,qdata)=>{
 					data.qData = qdata;
-					data.qDataTags = JSON.parse(data.qData.hashtags);
+					data.qDataTags = (data.qData.hashtags);
 				},(msg,qdata)=>{
 					data.divQuizMenuContainer.html(
 						$('<div>',{class:'quizMenuContainer h-100'}).append(
@@ -2161,6 +2200,11 @@ function showQuizDetail(qID : string){
 						if(data.quizCardTags){
 							data.quizCardTags.html('');
 						}
+						if(isString(data.qDataTags) && isJSON(data.qDataTags)){
+							data.qDataTags = JSON.parse(data.qDataTags);
+						}
+						console.log({qDataTags: data.qDataTags});
+
 						for(var ttag of data.qDataTags){
 							var ttagSpan = $('<span>',{class:'card-tag'}).append(
 								$('<i>',{class:'fab fa-slack-hash'})
@@ -2345,8 +2389,8 @@ async function retrieveFollowerActivity(){
 		if(!res.success) return Promise.resolve([]);
 		let dat = res.data as IUserData;
 		let myFollowing : string[] = [];
-		if(dat?.following && isJSON(dat.following)){
-			myFollowing = JSON.parse(dat.following as string);
+		if(dat?.following && isObject(dat.following)){
+			myFollowing = (dat.following);
 		}
 		if(!myFollowing.length){
 			return Promise.resolve([]);
@@ -2400,7 +2444,7 @@ async function addUserToCont(uData : IUserData, cont : Element | JQuery){
 
 	if(conductor){
 		conductor.connectElement($(_div)[0]);
-		$(_div).on('beatHit',(event:any)=>{
+		$(_div).on('beatHit',(event:Event)=>{
 			let e = event as CustomEvent;
 			let currBeat = e.detail.beat;
 			if(currBeat%2==0){
@@ -2440,8 +2484,8 @@ async function addQuizToCont(qData : IQuizData, cont : Element | JQuery){
 
 async function addListToCont(lData : IPlaylistData, cont : Element | JQuery){
 	let _quizzes : string[] = [];
-	if(isJSON(lData.quizzes)){
-		_quizzes = JSON.parse(lData.quizzes as string); //array
+	if(isObject(lData.quizzes)){
+		_quizzes = (lData.quizzes); //array
 	}
 	let _div = $('<div>',{class:'row p-2 m-2 w-90 h-10 searchOpt activityRoute'}).append([
 		$('<div>',{class:'col-2 p-1 cI-bg c0-txt rounded text-center'})
@@ -2460,9 +2504,10 @@ async function addListToCont(lData : IPlaylistData, cont : Element | JQuery){
 	$(cont).append(_div);
 	if(conductor){
 		conductor.connectElement($(_div)[0]);
-		$(_div).on('beatHit',(event:any)=>{
+		$(_div).on('beatHit',(event:Event)=>{
 			let e = event as CustomEvent;
-			let currBeat = event.detail.beat;
+			
+			let currBeat = e.detail.beat;
 			if(currBeat%2==0){
 				let animBox = anime({
 					targets: [e.currentTarget],
@@ -2505,13 +2550,12 @@ async function addActivityToCont(aData : IActivityData, cont : Element|JQuery){
 		if(res?.success && res?.data){
 			a_user = res.data as IUserData;
 			if(isObject(a_user.preferences)){
-				aUserPrefs = (a_user.preferences as IUserDataPrefs);
+				aUserPrefs = (a_user.preferences);
 			}
 		}
 		let aDetail : IActivityDataDetail;
-		if(isJSON(aData.details)){
-			aDetail = JSON.parse(aData.details as string);
-		}
+		aDetail = (aData.details);
+		
 		// console.log(aDetail);
 		
 		switch(aData.type){
@@ -2549,156 +2593,173 @@ async function addActivityToCont(aData : IActivityData, cont : Element|JQuery){
 			type:_resolve.type,subType:'get',data:_resolve.data
 		}).then((res)=>{
 
-			let a_data = res?.data as any;
+			let a_data = res?.data;
 
 			switch(aData.type){
-				case 'Created Quiz': 
+				case 'Created Quiz':{ 
+					let qData = a_data as IQuizData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` created a quiz: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
 					]);
-					break;
-				case 'Played Quiz':
+				} break;
+				case 'Played Quiz':{
+					let qData = a_data as IQuizData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` is playing a quiz: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
 						$('<span>',{class:'p-1 '}).text(` by `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.username||`[Deleted]`}`).attr('data-userid',`${a_data?.userID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.username||`[Deleted]`}`).attr('data-userid',`${qData?.userID}`),
 					]);
-					break;
-				case 'Completed Quiz':
+				} break;
+				case 'Completed Quiz':{
+					let qData = a_data as IQuizData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` completed a quiz: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
 						$('<span>',{class:'p-1 '}).text(` by `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.username||`[Deleted]`}`).attr('data-userid',`${a_data?.userID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.username||`[Deleted]`}`).attr('data-userid',`${qData?.userID}`),
 					]);
-					break;
-				case 'Edited Quiz':
+				} break;
+				case 'Edited Quiz':{
+					let qData = a_data as IQuizData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` edited a quiz: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
 					]);
-					break;
-				case 'Deleted Quiz':
+				} break;
+				case 'Deleted Quiz':{
+					let qData = a_data as IQuizData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` deleted a quiz: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.name||`[Deleted]`}`).attr('data-quizid',`${aDetail.quizID}`),
 					]);
-					break;
-				case 'Created Playlist':
+				} break;
+				case 'Created Playlist':{
+					let pData = a_data as IPlaylistData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` created a playlist: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${pData?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
 					]);
-					break;
-				case 'Edited Playlist':
+				} break;
+				case 'Edited Playlist':{
+					let pData = a_data as IPlaylistData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` edited a playlist: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${pData?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
 					]);
-					break;
-				case 'Deleted Playlist':
+				} break;
+				case 'Deleted Playlist':{
+					let pData = a_data as IPlaylistData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` deleted a playlist: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${pData?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
 					]);
-					break;
-				case 'Played Playlist':
+				} break;
+				case 'Played Playlist':{
+					let pData = a_data as IPlaylistData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` played a playlist: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${pData?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.listID}`),
 						$('<span>',{class:'p-1 '}).text(` by `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.username||`[Deleted]`}`).attr('data-userid',`${a_data?.userID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${pData.username||`[Deleted]`}`).attr('data-userid',`${pData?.userID}`),
 					]);
-					break;
-				case 'Added Song':
-
+				} break;
+				case 'Added Song':{
+					let sData = a_data as ISongData;
+					
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` added a song: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.author||`[Deleted]`} - ${a_data.title||`[Deleted]`}`).attr('data-songid',`${aDetail.songID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${sData.author||`[Deleted]`} - ${sData.title||`[Deleted]`}`).attr('data-songid',`${aDetail.songID}`),
 					]);
-					break;
-				case 'Edited Song':
-
+				} break;
+				case 'Edited Song':{
+					let sData = a_data as ISongData;
+					
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` edited a song: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.author||`[Deleted]`} - ${a_data.title||`[Deleted]`}`).attr('data-songid',`${aDetail.songID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${sData.author||`[Deleted]`} - ${sData.title||`[Deleted]`}`).attr('data-songid',`${aDetail.songID}`),
 					]);
-					break;
-				case 'Deleted Song':
+				} break;
+				case 'Deleted Song':{
+					let sData = a_data as ISongData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` removed a song: `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.author||`[Deleted]`} - ${a_data.title||`[Deleted]`}`).attr('data-songid',`${aDetail.songID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${sData.author||`[Deleted]`} - ${sData.title||`[Deleted]`}`).attr('data-songid',`${aDetail.songID}`),
 					]);
-					break;
-				case 'Created User':
-
+				} break;
+				case 'Created User':{
+					let uData = a_data as IUserData;
+					
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` joined Just Bops & Quizzes!`),
 					]);
-					break;
-				case 'Added Friend':
-
+				} break;
+				case 'Added Friend':{
+					let uData = a_data as IUserData;
+					
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` and `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.username||`[Deleted]`}`).attr('data-userid',`${aDetail.friendID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${uData.username||`[Deleted]`}`).attr('data-userid',`${aDetail.friendID}`),
 						$('<span>',{class:'p-1 '}).text(` are now friends`),
 					]);
-					break;
-				case 'Friend Request':
+				} break;
+				case 'Friend Request':{
+					let uData = a_data as IUserData;
+					
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` sent a friend request `),
 					]);
-					break;
-				case 'Followed':
-
+				} break;
+				case 'Followed':{
+					let uData = a_data as IUserData;
+					
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` just followed `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.username||`[Deleted]`}`).attr('data-userid',`${aDetail.friendID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${uData.username||`[Deleted]`}`).attr('data-userid',`${aDetail.friendID}`),
 					]);
-					break;
-				case 'Maxed Score':
+				} break;
+				case 'Maxed Score':{
+					let qData = a_data as IQuizData;
 
 					_resolve.div = $('<div>',{class:'activityPart'}).append([
 						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_user?.username||`[Deleted]`}`).attr('data-userid',`${aData.userID}`),
 						$('<span>',{class:'p-1 '}).text(` maxed out the score for the quiz `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.quizID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData?.name||`[Deleted]`}`).attr('data-listid',`${aDetail.quizID}`),
 						$('<span>',{class:'p-1 '}).text(` by `),
-						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${a_data.username||`[Deleted]`}`).attr('data-userid',`${a_data?.userID}`),
+						$('<span>',{class:`p-1 c${aUserPrefs?.color||`A`}-bg activityRoute`}).text(`${qData.username||`[Deleted]`}`).attr('data-userid',`${qData?.userID}`),
 					]);
-					break;
+				} break;
 				default:
 					break;
 			}
-			/*console.log(_resolve.info);
-			console.log(_resolve.div);*/
+			
 			if(!_resolve.div){
 				console.log('NO DIV');
 				return;
@@ -2712,7 +2773,7 @@ async function addActivityToCont(aData : IActivityData, cont : Element|JQuery){
 			$(cont).append(divData);
 			if(conductor){
 				conductor.connectElement($(divData)[0]);
-				$(divData).on('beatHit',(event:any)=>{
+				$(divData).on('beatHit',(event:Event)=>{
 					let e = event as CustomEvent;
 
 					let currBeat = e.detail.beat;
@@ -2749,7 +2810,7 @@ function addListToDOM(lData : IPlaylistData){
 	};
 	 */
 	var rndColSize = rndInt(1,3);
-	var lDataQuizzes : string[] = JSON.parse(lData.quizzes as string);
+	var lDataQuizzes : string[] = (lData.quizzes);
 	var divData = $('<div>',{
 		class: `row m-2 quiZ`, id: `${lData.id}`
 	}).append(
@@ -2774,7 +2835,7 @@ function addListToDOM(lData : IPlaylistData){
 	if(conductor){
 		conductor.connectElement($(`#${lData.id}`)[0]);
 	}
-	$('.quiZ').on('beatHit',(event:any)=>{
+	$('.quiZ').on('beatHit',(event:Event)=>{
 		let e = event as CustomEvent;
 
 		var currBeat = e.detail.beat;
@@ -2814,7 +2875,7 @@ function addQuizToDOM(qData : IQuizData){
 	 */
 	var rndColSize = rndInt(1,5);
 	var hashtagData = "";
-	var qDataTags : string[] = JSON.parse(qData.hashtags as string);
+	var qDataTags : string[] = (qData.hashtags);
 	for(var ttag of qDataTags){
 		var dat = `<span class="card-tag"><i class="fab fa-slack-hash"></i>`+ttag+`</span>`;
 		hashtagData += dat;
@@ -2845,7 +2906,7 @@ function addQuizToDOM(qData : IQuizData){
 	if(conductor){
 		conductor.connectElement($(`#${qData.id}`)[0]);
 	}
-	$('.quiZ').on('beatHit',(event:any)=>{
+	$('.quiZ').on('beatHit',(event:Event)=>{
 		let e = event as CustomEvent;
 
 		var currBeat = e.detail.beat;
@@ -3275,7 +3336,7 @@ function loadEvents(){
 		let hashtagArea = $('<div>',{class:'hashtagAreaDiv w-100 h-100', id:"quizHashtags"})
 		.attr('name','hashtags')[0];
 
-		let thisForm = $(thisElem).parents('.createQuizForm')[0];
+		let thisForm = $(thisElem).parents('.createQuizForm')[0] as HTMLFormElement;
 		let initText = String(thisElem.value);
 		initText = initText.replaceAll('&#160;','');
 		initText = initText.replaceAll('&nbsp;','');
@@ -3293,8 +3354,8 @@ function loadEvents(){
 		}
 		$(hashtagArea).attr('data-tags',JSON.stringify(properTags));
 		// console.log(properTags);
-		thisForm.dataset.tags = JSON.stringify(properTags);
-		console.log(thisForm.dataset.tags);
+		thisForm.tags = (properTags);
+		console.log(thisForm.tags);
 
 		if(properTags.length<1){
 			$(hashtagArea).text('#hashtags, #seperated, #by, #commas, #no need to worry about, #spacing or adding a sharp symbol');
@@ -3336,7 +3397,7 @@ function loadEvents(){
 			songIsPlay = false;
 		}
 	});
-	$('.pfp').on('barHit',(event:any)=>{
+	$('.pfp').on('barHit',(event:Event)=>{
 		let e = event as CustomEvent;
 
 		var pfp = e.currentTarget;
@@ -3352,7 +3413,7 @@ function loadEvents(){
 		conductor.connectElements($('.formBtn').toArray());
 		conductor.connectElements($('.clickContainer').toArray());
 	}
-	$('.clickContainer').on('beatHit',(event:any)=>{
+	$('.clickContainer').on('beatHit',(event:Event)=>{
 		let e = event as CustomEvent;
 
 		var cont = e.currentTarget;
@@ -3364,7 +3425,7 @@ function loadEvents(){
 			direction: 'alternate',
 		});
 	});
-	$('.formBtn').on('stepHit',(event:any)=>{
+	$('.formBtn').on('stepHit',(event:Event)=>{
 		let e = event as CustomEvent;
 
 		var btn = e.currentTarget;
@@ -3458,7 +3519,7 @@ function loadEvents(){
 		initHTML = initHTML.replaceAll('&nbsp;','');
 		var elChilds = Array.from(hashtagArea.children);
 		let tags : string[] = [];
-		theForm.dataset.tags = JSON.stringify([]);
+		theForm.tags = ([]);
 
 		elChilds.forEach((elChild : HTMLElement)=>{
 			let innerText = elChild.innerText.trim();
@@ -3478,8 +3539,8 @@ function loadEvents(){
 				initHTML += `<div class="hashtagAreaTag"><i class="fab fa-slack-hash"></i>`+ttag+`</div>`;
 		});
 		hashtagArea.innerHTML = initHTML+'&#160;';
-		theForm.dataset.tags = JSON.stringify(tags);
-		console.log(theForm.dataset.tags);
+		theForm.tags = tags;
+		console.log(theForm.tags);
 	});
 	$('.hashtagArea').on('input',(event)=>{
 		var hashtagArea = event.currentTarget;
@@ -3706,14 +3767,16 @@ function loadEvents(){
 			let resData = await res.text();
 			if(!isJSON(resData)){
 				easyPopUpBox('An Error occured uploading quiz files!');
+				return;
 			}
-			let data = JSON.parse(resData);
+			let data : IResponse = JSON.parse(resData);
 
 			if(data?.success && data?.data?.id){
 				initFormDatJSON.songURL = data.data.id;
-			}else{
-				return data;
 			}
+			// else{
+			// 	return data;
+			// }
 
 			return await fetch('/api',{
 				method:'POST', body:JSON.stringify(formDat), headers: { 'Content-Type': 'application/json' }
@@ -3723,8 +3786,9 @@ function loadEvents(){
 			let resData = await res.text();
 			if(!isJSON(resData)){
 				logg('An Error occured trying to upload song');
+				return;
 			}
-			let data = JSON.parse(resData);
+			let data : IResponse = JSON.parse(resData);
 			if('success' in data){
 				logg(data.message);
 				if(data.success){
@@ -3938,8 +4002,8 @@ function homeSearch(_query : string){
 					for(let _q of res.lists){
 						if(!_q) continue;
 						let _quizzes : string[] = [];
-						if(isJSON(_q.quizzes)){
-							_quizzes = JSON.parse(_q.quizzes as string); //array
+						if(isObject(_q.quizzes)){
+							_quizzes = (_q.quizzes); //array
 						}
 						let _div = $('<div>',{class:'row p-2 m-2 w-90 h-10 searchOpt activityRoute'}).append([
 							$('<div>',{class:'col-2 p-1 cI-bg c0-txt rounded text-center'}).text(`Playlist`),
@@ -3964,7 +4028,7 @@ function homeSearch(_query : string){
 					$(data.cardCont).append(divArr);
 					if(conductor){
 						conductor.connectElements($('.searchOpt').toArray());
-						$('.searchOpt').on('barHit',(event:any)=>{
+						$('.searchOpt').on('barHit',(event:Event)=>{
 							let e = event as CustomEvent;
 
 							let currBar = e.detail.bar;
@@ -4087,7 +4151,7 @@ function createQuizSect(_quizData : IQuizData = null){
 		loadEvents();
 		let elemForm = $(_slid[0]).children('.createQuizForm')[0] as HTMLFormElement;
 		let quizmenuctrl = $(_slid[0]).children('.quizMenuControl')[0];
-		elemForm.dataset.tags = JSON.stringify([]);
+		elemForm.tags = ([]);
 		elemForm.files = [];
 		let tags = [];
 
@@ -4159,12 +4223,12 @@ function createQuizSect(_quizData : IQuizData = null){
 							($(_slid[0]).find('.createQuizForm')[0] as HTMLFormElement).files = [new File([_blob], hash32(`${_url}${randomString(32)}`), {type:'image/*'})];
 						});
 					}
-					if(_quizData.hashtags && isJSON(_quizData.hashtags)){
-						var _quizHashtags : string[] = JSON.parse(_quizData.hashtags as string); //array
+					if(_quizData.hashtags && isArray(_quizData.hashtags)){
+						var _quizHashtags : string[] = (_quizData.hashtags); //array
 						var hashtagArea = $(_slid[0]).find('.hashtagAreaDiv');
 						$(hashtagArea).html('');
 						// .attr('name','hashtags')[0];
-						var thisForm = $(_slid[0]).find('.createQuizForm')[0];
+						var thisForm = $(_slid[0]).find('.createQuizForm')[0] as HTMLFormElement;
 						var initText = String(_quizHashtags.join(','));
 						initText = initText.replaceAll('&#160;','');
 						initText = initText.replaceAll('&nbsp;','');
@@ -4182,14 +4246,14 @@ function createQuizSect(_quizData : IQuizData = null){
 						}
 						$(hashtagArea).attr('data-tags',JSON.stringify(properTags));
 						// console.log(properTags);
-						thisForm.dataset.tags = JSON.stringify(properTags);
+						thisForm.tags = (properTags);
 						if(properTags.length<1){
 							$(hashtagArea).text('#hashtags, #seperated, #by, #commas, #no need to worry about, #spacing or adding a sharp symbol');
 						}
 						// $(hashtagArea).on('click',onHashtagAreaFocus);
 					}
-					if(_quizData.questions && isJSON(_quizData.questions)){
-						var _quizQuestions : IQuizQuestionData[] = JSON.parse(_quizData.questions as string); //array
+					if(_quizData.questions && isObject(_quizData.questions)){
+						var _quizQuestions : IQuizQuestionData[] = (_quizData.questions); //array
 						for(let _question of _quizQuestions){
 							_addQuestion(_question);
 						}
@@ -4277,21 +4341,21 @@ function createQuizSect(_quizData : IQuizData = null){
 							$('#quizEditExit').on('click',(event)=>{
 								data.sliderContentSlider.setContentIndex(0);
 							});
-							$('#quizEditAddSong').on('click',(event:any)=>{
+							$('#quizEditAddSong').on('click',(event:Event)=>{
 								enterSongSelect(event);
 							});
-							$('.songSelectConfirm').on('click',(event:any)=>{
+							$('.songSelectConfirm').on('click',(event:Event)=>{
 								selectSongSelect(event);
 							});
-							$('.previewBtn').on('click',(event:any)=>{
+							$('.previewBtn').on('click',(event:Event)=>{
 								previewSongSelect(event);
 							});
-							$('.rewindBtn').on('click',(event:any)=>{
+							$('.rewindBtn').on('click',(event:Event)=>{
 								if(conductor && data.isPlaying){
 									conductor.setBeat(conductor.currBeat-10);
 								}
 							});
-							$('.forwardBtn').on('click',(event:any)=>{
+							$('.forwardBtn').on('click',(event:Event)=>{
 								if(conductor && data.isPlaying){
 									conductor.setBeat(conductor.currBeat+10);
 								}
@@ -4369,6 +4433,9 @@ function createQuizSect(_quizData : IQuizData = null){
 							}
 
 							function previewSongSelect(event:Event){
+								event.preventDefault();
+								event.stopPropagation();
+								event.stopImmediatePropagation();
 								let choiceItems = $('.choiceSong').toArray();
 								// console.log(choiceItems);
 								let chosenSong = null;
@@ -4400,16 +4467,21 @@ function createQuizSect(_quizData : IQuizData = null){
 											return;
 										}
 										conductor.stop();
-										editAudio = new Audio(`/files/songs/${_song.songURL || 'defAudio'}`);
+										if(!conductor.audioIsConnected()){
+											editAudio = new Audio(`/files/songs/${_song.songURL || 'defAudio'}`);
+											conductor.connectAudioObject(editAudio);
+										}
+										editAudio = conductor.audio;
+										editAudio.src = `/files/songs/${_song.songURL}`;
+
 										conductor.changeStats(_song.bpm,_song.measure);
-										conductor.connectAudioObject(editAudio);
 										conductor.playOn();
 										data.isPlaying = true;
 										data.currentlyPlaying = _song;
 									}
-									loadEvents();
+									// loadEvents();
 								});
-								loadEvents();
+								// loadEvents();
 								
 							}
 
@@ -4460,10 +4532,10 @@ function createQuizSect(_quizData : IQuizData = null){
 								loadEvents();
 							}
 							$('.answerAdd').on('click',addAnswerToCurrentQuestion);
-							$('#quizEditExit').on('click',function(event:any){
+							$('#quizEditExit').on('click',function(event:Event){
 								exitQuizEdit(event);
 							});
-							$('#quizEditBtnCancel').on('click',function(event:any){
+							$('#quizEditBtnCancel').on('click',function(event:Event){
 								exitQuizEdit(event);
 							});
 
@@ -4490,12 +4562,11 @@ function createQuizSect(_quizData : IQuizData = null){
 								var theForm = $('.createQuizForm')[0] as HTMLFormElement;
 								// console.log(theForm);
 								
-								let tags = JSON.parse(theForm.dataset.tags);
+								let tags = theForm.tags;
 								console.log(tags);
 								console.log(theForm.files);
 								// return;
 								if(!tags || !tags.length){
-									console.log(theForm.dataset.tags);
 									return easyPopUpBox("Please add some tags, it would help for finding your quiz");
 								}
 								// return easyPopUpBox('JUST TESTING, IF U SEE THIS YOU LOST THE GAME');
@@ -4509,7 +4580,7 @@ function createQuizSect(_quizData : IQuizData = null){
 									console.log('No API/Userdata in system');
 									return;
 								}
-								var tagData = JSON.stringify(tags);
+								var tagData = (tags);
 
 
 								var initFormDat = getFormData('.createQuizForm');
@@ -4521,6 +4592,7 @@ function createQuizSect(_quizData : IQuizData = null){
 								initFormDatJSON.userID = userID;
 								initFormDatJSON.songID = $(data.elemForm).find('.quizSongChoice').attr('data-songid');
 								initFormDatJSON.hashtags = tagData;
+								initFormDatJSON.imageData = [];
 
 								if(theForm.files.length>0){
 									var init_blob = theForm.files[0];
@@ -4535,7 +4607,7 @@ function createQuizSect(_quizData : IQuizData = null){
 										userID: userID
 									}];
 								}else{
-									initFormDatJSON.imageURL = ['defImage'];
+									initFormDatJSON.imageURL = 'defImage';
 									console.log("The quiz' image file is corrupt or missing!");
 								}
 
@@ -4680,13 +4752,14 @@ function createQuizSect(_quizData : IQuizData = null){
 									let resData = await res.text();
 									if(!isJSON(resData)){
 										easyPopUpBox('An Error occured uploading quiz files!');
+										return;
 									}
-									let data = JSON.parse(resData);
+									let data : IResponse = JSON.parse(resData);
 
 									if(data?.success && data?.data?.fileData){
 										let fileData = data.data.fileData;
 										for(let i=0;i<fileData.length;i++){
-											if(i==0 && data.fileData[0]){
+											if(i==0 && fileData[0]){
 												initFormDatJSON.imageURL = fileData[0].id || 'defImage';
 											}else{
 												initFormDatJSON.questionsData[i-1] = fileData[i].id || 'defImage';
@@ -4703,8 +4776,9 @@ function createQuizSect(_quizData : IQuizData = null){
 									let resData = await res.text();
 									if(!isJSON(resData)){
 										easyPopUpBox('Invalid response from server!');
+										return;
 									}
-									let rdata = JSON.parse(resData);
+									let rdata : IResponse = JSON.parse(resData);
 
 									if(rdata?.success){
 										console.log(rdata.data);
@@ -4848,7 +4922,7 @@ function createListSect(_listData : IPlaylistData = null){
 		loadEvents();
 		var elemForm = $(_slid[0]).find('.createPlaylist')[0] as HTMLFormElement;
 		var listMenuCtrl = $(_slid[0]).find('.quizMenuControl')[0];
-		elemForm.dataset.tags = JSON.stringify([]);
+		elemForm.tags = ([]);
 		let tags : string[] = [];
 		elemForm.files = [];
 		$(_slid[1]).load('html/home_playlistCreate_addToPlaylist.html',()=>{
@@ -4895,7 +4969,7 @@ function createListSect(_listData : IPlaylistData = null){
 						});
 					}
 					if(_listData.quizzes){
-						let _listQuizzes : string[] = JSON.parse(_listData.quizzes as string); //array
+						let _listQuizzes : string[] = (_listData.quizzes); //array
 						let quizPromises = _listQuizzes.map((elem,index,arr)=>{
 							return myHandler({type:'quiz',subType:'get',data:{
 								id:elem
@@ -5155,7 +5229,7 @@ function createListSect(_listData : IPlaylistData = null){
 									var quizName = String(quizz.name).trim();
 									var quizUsername = String(quizz.username).trim();
 									var quizDesc = String(quizz.description).trim();
-									var quizTags = String(JSON.parse(quizz.hashtags).join(' ')).trim();
+									var quizTags = String(quizz.hashtags.join(' ')).trim();
 									if(quizName.includes(setCriteria)){
 										_collected.push(quizz);
 									}else if(quizDesc.includes(setCriteria)){
@@ -5227,7 +5301,9 @@ function createListSect(_listData : IPlaylistData = null){
 								myHandler({
 									type:'quiz',subType:'getAll',data:{userID:userID}
 								},(msg,_data)=>{
-									_data = JSON.parse(JSON.stringify(_data));
+									if(isString(_data) && isJSON(_data)){
+										_data = JSON.parse(_data as string);
+									}
 									data.listAllSearchesList = _data;
 									showSearchResults(_data);
 									loadEvents();
@@ -5367,8 +5443,9 @@ function createListSect(_listData : IPlaylistData = null){
 									let resData = await res.text();
 									if(!isJSON(resData)){
 										easyPopUpBox('An Error occured uploading list images!');
+										return;
 									}
-									let data = JSON.parse(resData);
+									let data : IResponse = JSON.parse(resData);
 
 									if(data?.success && data?.data?.id){
 										initFormDatJSON.imageURL = data.data.id || 'defImage';
@@ -5383,8 +5460,9 @@ function createListSect(_listData : IPlaylistData = null){
 									let resData = await res.text();
 									if(!isJSON(resData)){
 										easyPopUpBox('Invalid response from server!');
+										return;
 									}
-									let rdata = JSON.parse(resData);
+									let rdata : IResponse = JSON.parse(resData);
 
 									if(rdata?.success){
 										console.log(rdata.data);
@@ -5448,7 +5526,7 @@ function userEditSect(_userData){
 		var elemForm = $(_slid[0]).find('.userEditForm')[0] as HTMLFormElement;
 		var listMenuCtrl = $(_slid[0]).find('.quizMenuControl')[0];
 		let tags = [];
-		elemForm.tags = JSON.stringify([]);
+		elemForm.tags = [];
 		elemForm.files = [];
 		loadEvents();
 		if(_userData){
@@ -5704,8 +5782,9 @@ function userEditSect(_userData){
 								let resData = await res.text();
 								if(!isJSON(resData)){
 									easyPopUpBox('An Error occured uploading quiz files!');
+									return;
 								}
-								let dat = JSON.parse(resData);
+								let dat : IResponse = JSON.parse(resData);
 
 								if(!('success' in dat)){
 									console.log(data);
@@ -5745,8 +5824,9 @@ function userEditSect(_userData){
 								let resData = await res.text();
 								if(!isJSON(resData)){
 									easyPopUpBox('An Error occured uploading user files!');
+									return;
 								}
-								let data = JSON.parse(resData);
+								let data : IResponse = JSON.parse(resData);
 
 								if(data?.success && data?.data?.id){
 									initFormDatJSON.imageURL = data.data.id;

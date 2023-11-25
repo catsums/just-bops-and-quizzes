@@ -1,11 +1,11 @@
 /*myMouse.js*/
 
+import anime from 'animejs';
+import $ from 'jquery';
 import {
 	rad2deg, randomId, rndInt, randomID,
 } from '@catsums/my';
 import { Vector2 } from '@catsums/vector2';
-import anime from 'animejs';
-import $ from 'jquery';
 
 (function(){
 	var mouseStopTimer; 

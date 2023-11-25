@@ -1,11 +1,11 @@
 /*mainscript.js*/
 
+import $ from 'jquery';
+import anime from 'animejs';
 import { Conductor } from '@catsums/conductorjs';
 import {
 	randomID, rndInt, isArray, isJSON, isObject, isString, randomString
 } from '@catsums/my'; 
-import $ from 'jquery';
-import anime from 'animejs';
 
 export function loadUserPreferences(){
 	if((!localStorage.getItem('JBQ_color'))&&(!localStorage.getItem('JBQ_shape'))){
@@ -27,10 +27,25 @@ export function loadUserPreferences(){
 }
 
 declare global {
-
+	interface IResponse {
+		success : boolean;
+		message : string;
+		data : any;
+	}
 	interface IUserDataPrefs {
 		color : string;
 		shape : string;
+	}
+
+	interface IPermissionData {
+		create?: boolean;
+		edit?: boolean;
+		delete?: boolean;
+	}
+	interface IUserDataPerms {
+		song?: IPermissionData;
+		user?: IPermissionData;
+		quiz?: IPermissionData;
 	}
 
 	interface IUserData {
@@ -42,13 +57,13 @@ declare global {
 		lastname? : string;
 		description? : string;
 		imageURL : string;
-		preferences : IUserDataPrefs | string;
-		friendlist? : string | string[];
-		following? : string | string[];
-		followers? : string | string[];
+		preferences : IUserDataPrefs;
+		friendlist? : string[];
+		following? : string[];
+		followers? : string[];
 		score? : number;
 		role? : string;
-		permissions? : IJSON | string;
+		permissions? : IUserDataPerms;
 		apikey? : string;
 	}
 
@@ -61,7 +76,7 @@ declare global {
 		question : string;
 		imageURL : string;
 		type? : string;
-		answers : IQuizAnswerData[]
+		answers : IQuizAnswerData[];
 	}
 
 	interface IQuizData {
@@ -73,8 +88,8 @@ declare global {
 		songID : string;
 		imageURL : string;
 		passingGrade : number;
-		hashtags : string | string[];
-		questions : IQuizQuestionData[] | string;
+		hashtags : string[];
+		questions : IQuizQuestionData[];
 	}
 
 	interface IPlaylistData {
@@ -84,7 +99,7 @@ declare global {
 		name : string;
 		description : string;
 		imageURL : string;
-		quizzes : string | string[]
+		quizzes : string[];
 	}
 
 	interface ISongData {
@@ -97,26 +112,26 @@ declare global {
 	}
 
 	interface IActivityDataDetail {
-		quizID?:string; 
-		friendID?:string;
-		listID?:string; 
-		songID?:string;
-		score?:string|number;
+		quizID? : string; 
+		friendID? : string;
+		listID? : string; 
+		songID? : string;
+		score? : number;
 	}
 
 	interface IActivityData{
 		id? : string; 
-		userID:string;
-		type:string; 
-		info:string;
-		details: IActivityDataDetail | string;
+		userID : string;
+		type : string; 
+		info : string;
+		details : IActivityDataDetail;
 	}
 
 	interface IMenuTrackerState {
 		id? : string;
 		index : number;
 		content : JQuery | null;
-		element? : Element | JQuery | string | null;
+		element? : JQuery | Element | null;
 		prev : IMenuTrackerState | null;
 		next : IMenuTrackerState | null;
 		data : IObject;
@@ -130,7 +145,7 @@ declare global {
 		start: () => IMenuTrackerState;
 		push: (d:Element|JQuery|string|{
 			index?: number, data?: IObject, onChange?:(d:any) => void,
-			element : JQuery | Element | string,
+			element : JQuery | Element,
 		}) => Promise<any|null>;
 		pop: () => Promise<any|null>;
 		goBack: () => Promise<any>;
@@ -208,7 +223,7 @@ export function createMenuTracker({
 	_current : IMenuTrackerState, 
 	_start : IMenuTrackerState;
 
-	if(container instanceof jQuery){
+	if(container instanceof $){
 		cont = container as JQuery;
 	}else if(container instanceof HTMLElement){
 		cont = $(container);
@@ -225,7 +240,7 @@ export function createMenuTracker({
 	}){
 		let initElem; 
 		let st : IMenuTrackerState;
-		if(element instanceof jQuery || element instanceof HTMLElement || typeof element === 'string'){
+		if(element instanceof $ || element instanceof HTMLElement || typeof element === 'string'){
 			console.log('PUSHING TO NEW');
 			
 			if(typeof element === 'string'){
@@ -245,13 +260,14 @@ export function createMenuTracker({
 			}
 		}else if(element instanceof Object && ('element' in element)){
 			let elem : JQuery | Element | string | null = (element as IObject).element ;
-			if(elem instanceof jQuery){
+			if(elem instanceof $){
 				initElem = elem;
-			}else if(elem instanceof Element){
-				initElem = $(elem);
-			}else if(typeof elem === 'string'){
-				initElem = $(elem);
+			}else if(elem instanceof Element || typeof elem === 'string'){
+				initElem = $(elem as any);
 			}
+
+			let data = element.data;
+			let onChange = element.onChange;
 
 			st = {
 				id: randomString(8),
@@ -259,8 +275,8 @@ export function createMenuTracker({
 				content: initElem,
 				prev: _current||null,
 				next: null,
-				data: ((element as IObject).data) ? (element as IObject).data : {},
-				onChange: ((element as IObject).onChange) ? (element as IObject).onChange : (data)=>{},
+				data: data || {},
+				onChange: onChange || ((data)=>{}),
 			}
 		}else{
 			return null;
@@ -331,7 +347,7 @@ export function createMenuTracker({
 		
 	}
 
-	if(start instanceof jQuery || start instanceof HTMLElement || typeof start === 'string'){
+	if(start instanceof $ || start instanceof HTMLElement || typeof start === 'string'){
 		push(start);
 	}
 
@@ -414,7 +430,7 @@ export function setSlidableContent({
 	var mainContentAmt = 0;
 	var currentContentIndex = 0;
 
-	if(group instanceof jQuery || group instanceof Element){
+	if(group instanceof $ || group instanceof Element){
 		_groupElems = $(group as (JQuery | Element)).toArray();
 	}else if(typeof group==='string'){ //typescript whyyyy
 		_groupElems = $(group as string).toArray();
@@ -428,7 +444,7 @@ export function setSlidableContent({
 
 	if(!container || container===''){
 		_container = $(_groupElems[0]).parent();
-	}else if(typeof container==='string'||container instanceof jQuery || container instanceof Element){
+	}else if(typeof container==='string'||container instanceof $ || container instanceof Element){
 		
 		if(typeof container==="string"){
 			_container = $(container);
@@ -449,7 +465,7 @@ export function setSlidableContent({
 
 	if(!leftButton || leftButton===''){
 		return null;
-	}else if(isString(leftButton) || leftButton instanceof jQuery){
+	}else if(isString(leftButton) || leftButton instanceof $){
 		leftButton = $(leftButton as HTMLElement);
 	}else if(leftButton instanceof HTMLElement){
 		leftButton = leftButton;
@@ -460,7 +476,7 @@ export function setSlidableContent({
 
 	if(!rightButton || rightButton===''){
 		return null;
-	}else if(typeof rightButton==='string' || rightButton instanceof jQuery){
+	}else if(typeof rightButton==='string' || rightButton instanceof $){
 		rightButton = $(rightButton as HTMLElement);
 	}else if(rightButton instanceof HTMLElement){
 		rightButton = rightButton;
@@ -472,7 +488,7 @@ export function setSlidableContent({
 	for(let indButton of indexButtons){
 		if(!indButton || !indButton.button || !indButton.index || isNaN(indButton.index)){
 			continue;
-		}else if(typeof indButton.button==='string'||indButton.button instanceof jQuery||indButton.button instanceof Element){
+		}else if(typeof indButton.button==='string'||indButton.button instanceof $||indButton.button instanceof Element){
 			indexButtons.push({
 				button:$(indButton.button as HTMLElement),
 				index:Number(indButton.index)
@@ -931,7 +947,7 @@ export async function myHandler(
 					return Promise.resolve(_response(true,data.message,data.data));
 				}else{
 					onFail(data.message,data.data);
-					return Promise.resolve(_response(true,data.message,data.data));
+					return Promise.resolve(_response(false,data.message,data.data));
 				}
 			}else{
 				onErr('Invalid Data from server',data);

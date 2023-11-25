@@ -1,5 +1,9 @@
 /* myMouse.css */
 
+body {
+	cursor: none;
+}
+
 .mouseParticle{
 	width: 5px;
 	height: 5px;

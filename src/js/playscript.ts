@@ -1,16 +1,13 @@
+
+import $ from "jquery";
+import anime from 'animejs';
 import { Conductor } from '@catsums/conductorjs';
 import {
-	docReady,  hardPush, defectAllFormSubmits,
-	formDataToJSON, getFormData, 
-	setCookie, getCookie, deleteCookie,
+	docReady, 
 	parseURLParams, processAjaxData,
-	isObject, isString, isInt, isJSON, isArray,
 	findItem, stringTrimToLength,
-	hash32, hash64, getBase64, getFileBlob,
-	rndInt, randomID, randomString, randomId,
-	findItemObjectIndex
+	rndInt,
 } from '@catsums/my';
-import * as MyMouse from './myMouse.js';
 import {
 	displayPopUpBox, deletePopUp, easyPopUpBox,
 	logg, 
@@ -19,12 +16,13 @@ import {
 	myAPI, myHandler,
 	saveActivity, getActivity,
 	transitionTo,
-} from './mainscript.js';
+} from './mainscript';
 
-import $ from "jquery";
-import anime from 'animejs';
-
-var conductor, thisQuiz, thisList, thisSong, answeredFlags = [];
+var conductor : Conductor, 
+thisQuiz : IQuizData, 
+thisList : IPlaylistData, 
+thisSong : ISongData, 
+answeredFlags : boolean[]  = [];
 var listIndex = 0, listQuizzes = [];
 var thisUser : IUserData;
 var quizCtrl = {
@@ -110,7 +108,7 @@ function main(){
 		type:'quiz',subType:'get',data:{
 			id:(urlParams.quiz?urlParams.quiz:'')
 		}
-	}).then((res)=>{
+	}).then((res:IResponse)=>{
 		if(!res?.success || !res?.data || !res?.data[0]){
 			displayPopUpBox({
 				messageText:`Error loading quiz. Quiz might be broken or none existent.`,
@@ -127,7 +125,7 @@ function main(){
 		let cont = $('<div>',{class:'sliderContainer mx-3 w-100 h-80 centerFlexCont'});
 		let questionData;
 		
-		if(!isJSON(thisQuiz?.questions)){
+		if(!(thisQuiz?.questions)){
 			displayPopUpBox({
 				messageText:`This quiz seems to be missing its questions so it's unplayable.`,
 				cancelText:`Return to Home Screen`,
@@ -137,7 +135,7 @@ function main(){
 			});
 			return;
 		}
-		questionData = JSON.parse(thisQuiz?.questions);
+		questionData = (thisQuiz?.questions);
 		console.log(questionData);
 		if(!questionData || !questionData.length){
 			displayPopUpBox({
@@ -253,7 +251,7 @@ function main(){
 				}
 				thisList = pres.data[0];
 
-				if(!isJSON(thisList?.quizzes)){
+				if(!(thisList?.quizzes)){
 					displayPopUpBox({
 						messageText:`Error loading playlist. Playlist might be broken or none existent.`,
 						cancelText:`Return to Home Screen`,
@@ -263,7 +261,7 @@ function main(){
 					});
 					return;
 				}
-				let _quizzes = JSON.parse(thisList?.quizzes);	//array
+				let _quizzes = (thisList?.quizzes);	//array
 
 				let isValid = false;
 				for(let q=0;q<_quizzes.length;q++){
@@ -885,7 +883,7 @@ function allAreAnswered(){
 function checkQuestion(){
 	if(questionSlider){
 		let qIndex = questionSlider.currentContentIndex();
-		let thisQuizQuestions =  JSON.parse(thisQuiz?.questions);
+		let thisQuizQuestions =  (thisQuiz?.questions);
 		let thisQuestion = thisQuizQuestions[qIndex];
 		// console.log(currQuestion[qIndex]);
 
@@ -983,6 +981,8 @@ function createConductor(){
 	conductor.connectElements([
 		$('#myMouse')[0]
 	]);
+
+	conductor.activate();
 }
 function retrievePlaylist(){
 	myHandler({
@@ -1002,12 +1002,13 @@ function retrievePlaylist(){
 	});
 }
 function playDefaultSong() {
-	var currSong = {
+	var currSong : ISongData = {
+		id: '',
 		title: 'Gizmo',
 		author: 'Syn Cole',
 		bpm: 124,
 		measure: 8,
-		songURL: 'default.dat'
+		songURL: './data/audio/default.dat'
 	};
 
 	playSong(currSong);
@@ -1015,7 +1016,7 @@ function playDefaultSong() {
 	loadEvents();
 	console.log('loaded default.dat');
 }
-function playSong(currSong) {
+function playSong(currSong : ISongData) {
 	var audio = new Audio(`./data/audio/${currSong.songURL}`);
 	if(!conductor) createConductor();
 	conductor.changeStats(currSong.bpm,currSong.measure);
@@ -1024,7 +1025,7 @@ function playSong(currSong) {
 	loadEvents();
 }
 
-function verifyLogin(callback){
+function verifyLogin(callback:(d:any)=>void){
 	var userID = localStorage.getItem('JBQ_userId');
 	myHandler({
 		type:'verify',data:{id:userID}
@@ -1165,7 +1166,7 @@ function muteQuiz(){
 	}
 }
 
-function buildUp(time){
+function buildUp(time:number){
 	if(time<0||isNaN(time)) return;
 	if(conductor){
 		let preprogress = 0;
@@ -1180,7 +1181,7 @@ function buildUp(time){
 		});
 	}
 }
-function buildDown(time){
+function buildDown(time:number){
 	if(time<0||isNaN(time)) return;
 	if(conductor){
 		let preprogress = 0;

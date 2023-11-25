@@ -1,5 +1,8 @@
 //signup_script
 
+import $ from "jquery";
+import anime from 'animejs';
+
 import { Conductor } from '@catsums/conductorjs';
 import {
 	docReady,  hardPush, defectAllFormSubmits,
@@ -8,13 +11,9 @@ import {
 	parseURLParams, processAjaxData,
 	isObject, isString, isInt, isJSON, 
 } from '@catsums/my';
-import * as MyMouse from './myMouse.js';
 import {
 	logg, myHandler, myAPI
-} from './mainscript.js';
-
-import $ from "jquery";
-import anime from 'animejs';
+} from './mainscript';
 
 var urlParams = parseURLParams(window.location.href) as IJSON;
 
@@ -91,17 +90,17 @@ function main(){
 					setCookie('JBQ_userId',dat.id);
 					setCookie('JBQ_apikey',dat.apikey);
 					setCookie('JBQ_role',dat.role);
-					setCookie('JBQ_permissions',dat.permissions as string);
+					setCookie('JBQ_permissions', JSON.stringify(dat.permissions));
 					
 
 					localStorage.setItem('JBQ_username', dat.username);
 					localStorage.setItem('JBQ_userId', dat.id);
 					localStorage.setItem('JBQ_apikey', dat.apikey);
 					localStorage.setItem('JBQ_role', dat.role);
-					localStorage.setItem('JBQ_permissions', dat.permissions as string);
+					localStorage.setItem('JBQ_permissions', JSON.stringify(dat.permissions));
 					
-					if(dat.preferences && isJSON(dat.preferences)){
-						var _pref = JSON.parse(dat.preferences as string);
+					if(dat.preferences && isObject(dat.preferences)){
+						var _pref = (dat.preferences);
 						localStorage.setItem('JBQ_color', _pref.color);
 						localStorage.setItem('JBQ_shape', _pref.shape);
 						setCookie('JBQ_color', _pref.color);

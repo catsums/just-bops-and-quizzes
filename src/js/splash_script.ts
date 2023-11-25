@@ -1,17 +1,18 @@
 ///splash_script.js
 
-import { Conductor } from '@catsums/conductorjs';
-import {
-	docReady, rndInt, hardPush, isJSON, defectAllFormSubmits,
-	formDataToJSON, getFormData, setCookie, getCookie
-} from '@catsums/my';
-import * as MyMouse from './myMouse.js';
-import {
-	logg, 
-} from './mainscript.js';
-
 import $ from "jquery";
 import anime from 'animejs';
+
+import { Conductor } from '@catsums/conductorjs';
+import {
+	docReady, rndInt, hardPush, defectAllFormSubmits,
+	formDataToJSON, getFormData, setCookie, getCookie,
+	isJSON, isString, isObject, isArray,
+} from '@catsums/my';
+import * as MyMouse from './myMouse';
+import {
+	logg, 
+} from './mainscript';
 
 // loadHTMLtoObject('#innerL','html/redpage.html');
 var songs : ISongData[] = []; 
@@ -31,6 +32,8 @@ function loadEvents(){
 			$('.splashLogo')[0], $('.disclaimer')[0], $('#coolSplashText')[0], $('#myMouse')[0]
 		]);
 		conductor.connectElements($('.formBtn').toArray());
+
+		conductor.activate();
 
 	}
 
@@ -202,12 +205,14 @@ function loadEvents(){
 				throw resData;
 			}
 
-			let data = JSON.parse(resData);
+			let data : IResponse = JSON.parse(resData);
 
 			console.log(data);
 			if(data && 'success' in data){
 				if(data.success){
-					data.data = JSON.parse(JSON.stringify(data.data));
+					if(isString(data.data) && isJSON(data.data)){
+						data.data = JSON.parse(data.data);
+					}
 					console.log(data.data);
 					songs = data.data;
 					playRandomSong();
@@ -248,30 +253,28 @@ function loadEvents(){
 		}).then(async(res)=>{
 			let resData = await res.text();
 			if(!isJSON(resData)){
-				logg(resData);
 				console.log(resData);
 			}
-			let data = JSON.parse(resData);
+			let data : IResponse = JSON.parse(resData);
 
 			if(data && 'success' in data){
 				console.log(data);
 				if(data.success){
-					var dat = data.data;
-					setCookie('JBQ_username',dat.username);
-					setCookie('JBQ_userId',dat.id);
-					setCookie('JBQ_apikey',dat.apikey);
-					setCookie('JBQ_role',dat.role);
-					setCookie('JBQ_permissions',dat.permissions);
+					var dat : IUserData = data.data;
+					setCookie('JBQ_username', dat.username);
+					setCookie('JBQ_userId', dat.id);
+					setCookie('JBQ_apikey', dat.apikey);
+					setCookie('JBQ_role', dat.role);
+					setCookie('JBQ_permissions', JSON.stringify(dat.permissions));
 					
-
 					localStorage.setItem('JBQ_username', dat.username);
 					localStorage.setItem('JBQ_userId', dat.id);
 					localStorage.setItem('JBQ_apikey', dat.apikey);
 					localStorage.setItem('JBQ_role', dat.role);
-					localStorage.setItem('JBQ_permissions', dat.permissions);
+					localStorage.setItem('JBQ_permissions', JSON.stringify(dat.permissions));
 					
-					if(dat.preferences && isJSON(dat.preferences)){
-						var _pref = JSON.parse(dat.preferences);
+					if(dat.preferences){
+						var _pref = (dat.preferences);
 						localStorage.setItem('JBQ_color', _pref.color);
 						localStorage.setItem('JBQ_shape', _pref.shape);
 						setCookie('JBQ_color', _pref.color);
