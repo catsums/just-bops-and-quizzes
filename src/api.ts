@@ -17,7 +17,7 @@ import cloudinary from 'cloudinary';
 //OUR VARIABLES AND HELPER FUNCTIONS
 import * as MY from '@catsums/my';
 import * as MAINVARS from './myMainVariables'
-import * as CONFIG from '../config/config';
+import * as CONFIG from '../etc/secrets/config';
 
 /// MONGODB ///
 

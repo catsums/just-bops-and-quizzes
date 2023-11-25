@@ -16,9 +16,7 @@ import * as API from './src/api';
 
 //OUR VARIABLES AND HELPER FUNCTIONS
 import * as MY from '@catsums/my';
-import * as MAINVARS from './src/myMainVariables'
-import * as CONFIG from './config/config';
-
+import * as MAINVARS from './src/myMainVariables';
 
 //SERVER RUNTIME SETTINGS
 var FileProcess : any = {
