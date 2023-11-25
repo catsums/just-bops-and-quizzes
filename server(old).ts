@@ -28,7 +28,7 @@
 	import * as MY from '@catsums/my';
 	import { Vector2 } from '@catsums/vector2';
 	import * as MAINVARS from './src/myMainVariables'
-	import * as CONFIG from './src/config';
+	import * as CONFIG from './config/config';
 
 ( async () => {
 

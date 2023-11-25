@@ -16,7 +16,7 @@
 		"strict": false,
 		"outDir": "lib"
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "config/config.ts"],
 	"typeRoots": ["./node_modules/@types", "./src"],
 }
   

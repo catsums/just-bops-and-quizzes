@@ -8,7 +8,6 @@ import bodyParser from 'body-parser';
 
 import * as MY from '@catsums/my';
 import * as MAINVARS from './myMainVariables'
-import * as CONFIG from './config';
 
 const ProcessDir = process.cwd();
 
