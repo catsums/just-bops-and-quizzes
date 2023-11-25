@@ -1,1 +1,1 @@
-npx webpack -w
+npm run watch
