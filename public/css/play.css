@@ -1,0 +1,677 @@
+.main-container {
+  overflow-y: auto;
+}
+.homeContainer {
+  border: thin solid var(--c4);
+  border-radius: 5px;
+  transition: background 0.5s;
+}
+.homeContainer:hover {
+  background: var(--c6);
+}
+.cardContainer {
+  margin: 4pt;
+}
+#containerFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mainContent {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  border: thin solid cyan;
+  --thisPadding: 9pt;
+  top: 0;
+  height: 30px;
+  width: calc(100% - var(--thisPadding));
+  transition: all 0.3s;
+}
+.makeItBlue {
+  background-color: var(--c1);
+}
+.scrollVerticalOff {
+  overflow-y: hidden !important;
+}
+.scrollVerticalOn {
+  overflow-y: auto !important;
+}
+.clickContainer {
+  display: flex;
+  background-color: var(--c0);
+  border: thin solid var(--c4);
+  color: var(--c4);
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  padding: auto 0;
+  transition: all 0.3s;
+}
+.clickContainer:hover {
+  background-color: var(--c4);
+  border: thin solid var(--c0);
+  color: var(--c0);
+}
+.clickContainer:active {
+  background-color: var(--c1);
+}
+.creationSection {
+  border-radius: 5px;
+  color: var(--c4);
+  background-color: var(--c0);
+  border: thin solid var(--c4);
+  align-items: center;
+  justify-content: center;
+}
+.creationSection .inputLbl {
+  padding: 4px;
+  font-size: 0.8em;
+}
+.creationSectionBtn {
+  display: flex;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+.hashtagAreaTag {
+  display: inline-block;
+  padding: 3px;
+  margin: 2px;
+  background-color: var(--c2);
+  color: var(--c0);
+  border-radius: 6px;
+  font-size: 8pt;
+}
+.dropArea {
+  overflow: hidden;
+}
+.dropSite {
+  display: flex;
+  height: 100px;
+  width: 100%;
+  background-color: var(--c0);
+  border: thin solid var(--c4);
+  color: var(--c4);
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  padding: auto 0;
+  transition: all 0.3s;
+}
+.dropStatus {
+  display: none;
+  height: 100px;
+  width: 100%;
+  background-color: var(--c0);
+  border: thin solid var(--c4);
+  color: var(--c4);
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  padding: auto 0;
+  transition: all 0.3s;
+}
+#dropBtn,
+#dropFiles {
+  display: none;
+}
+#containerM,
+#containerR {
+  overflow-y: scroll;
+}
+.overflow-scroll {
+  overflow-y: scroll;
+}
+.minitext {
+  font-size: 7pt;
+  color: var(--c1);
+}
+.pfp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--c0);
+  background-color: var(--cI);
+  font-size: 20pt;
+  transition: all 0.3s;
+}
+.pfp:hover {
+  background-color: var(--pI);
+}
+.pfpPlayButton {
+  transition: all 0.4s;
+}
+.pfpPlayButton:hover {
+  transform: scale(1.2);
+}
+.pfpPlayButton:active {
+  transform: scale(0.75);
+}
+.noQuizInfo {
+  display: flex;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--c1);
+}
+.splashLogo {
+  display: inline-block;
+  background: url(img/logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  vertical-align: middle;
+}
+.scrollAssist {
+  border-radius: 20px;
+  height: 4%;
+  width: 49%;
+  position: fixed;
+  transition: background-color 0.5s;
+  z-index: 200;
+}
+.scrollAssist:hover {
+  background-color: var(--c4);
+}
+.logOutRing {
+  --size: 7vh;
+  display: inline-block;
+  border-radius: 100%;
+  width: var(--size);
+  height: var(--size);
+  transition: all 0.3s;
+}
+.logOutRing:hover {
+  transform: scale(1.3);
+}
+.logOutRing:active,
+.logOutRing:active .logOutRing:hover {
+  transform: scale(1.9);
+}
+.profileOptionRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+}
+.profileOption,
+.profileOptionText,
+.profileOptionRing {
+  transition: all 0.5s;
+}
+.profileOption:hover .profileOptionText {
+  transform: translateX(5px);
+}
+.profileOption:hover .profileOptionRing {
+  transform: scale(1.4);
+}
+.stretchedToMargin {
+  display: block;
+  position: relative;
+  height: auto;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.card.quizCard,
+.card.questionCard {
+  display: flex;
+  background-color: var(--c6);
+  color: var(--c4);
+  border: thin solid var(--c0);
+  border-radius: 2px;
+  transition: all 0.5s;
+}
+.card.myCard {
+  font-size: 0.6em;
+  padding: 0px;
+  margin: 2px;
+  background-color: var(--c6);
+  color: var(--c4);
+  border: thin solid var(--c0);
+  border-radius: 2px;
+  display: inline-block;
+  transform-origin: top;
+  transition: all 0.5s;
+}
+.myCard:hover {
+  transform: scale(1.04);
+  z-index: 100;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.quizCard .card-header,
+.questionCard .card-header {
+  padding: 0px;
+}
+.myCard .card-body,
+.quizCard .card-body,
+.questionCard .card-body {
+  padding: 4px;
+  overflow: hidden;
+}
+.myCard .card-title,
+.quizCard .card-title {
+  color: var(--c0);
+  display: flex;
+  border-radius: 2px;
+  font-size: 1.2em;
+  font-family: var(--f0);
+  margin: 0;
+  padding: 4px;
+  background-color: var(--c2);
+  justify-content: flex-end;
+  align-items: center;
+}
+.myCard .card-subtitle,
+.quizCard .card-subtitle,
+.questionCard .card-subtitle {
+  color: var(--c2);
+  display: flex;
+  font-size: 1em;
+  padding: 2px;
+  margin: 0;
+  text-align: right;
+  justify-content: flex-end;
+  align-items: center;
+}
+.myCard .card-body {
+  display: flex;
+  transition: all 0.3s;
+}
+.quizCard .card-body,
+.questionCard .card-body {
+  overflow-y: auto;
+}
+.myCard .card-img-top,
+.myCard .card-img,
+.quizCard .card-img,
+.quizCard .card-img-top,
+.questionCard .card-img-top {
+  height: 8em;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--c0);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(img/logoBG.png);
+  transition: all 0.4s;
+}
+.quizCard .card-img-top:hover {
+  height: 16em;
+}
+.card-tags {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  overflow: auto;
+}
+.card-tag {
+  display: inline-block;
+  text-align: left;
+  padding: 3px;
+  margin: 2px;
+  background-color: var(--c3);
+  color: var(--c0);
+  border-radius: 6px;
+  font-size: 0.8em;
+  transition: all 0.5s;
+  width: initial;
+}
+.card-tag:hover {
+  background-color: var(--pI);
+}
+.myCard .cardRing {
+  position: absolute;
+  border-radius: 100%;
+  bottom: -20px;
+  left: 0px;
+  width: 40px;
+  height: 40px;
+  z-index: 200;
+  transition: all 0.3s;
+}
+.myCard .cardRing:hover {
+  background-color: var(--c0);
+}
+.cardRing.rightRing {
+  left: auto;
+  right: 0px;
+}
+.quizMenuContainer {
+  margin: auto;
+  display: block;
+  flex: all;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+.quizMenuControl {
+  display: flex;
+  flex: none;
+  border-radius: 2pt;
+  justify-content: center;
+  align-items: center;
+}
+.quizMenuControl.local {
+  justify-content: none;
+  align-items: none;
+  padding: 0;
+  margin: 0;
+}
+.quizMenuControl .formBtn {
+  z-index: 2002;
+}
+.quizMenuBtn,
+.quizEditBtn {
+  margin-right: 4pt;
+  margin-left: 4pt;
+  font-size: 1em;
+  transition: all 0.3s;
+}
+.thiccBtn,
+.thiccBtnText {
+  transition: all 0.3s;
+  color: var(--cI);
+}
+.returnBtn {
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  border-radius: 100%;
+  z-index: 2001;
+}
+.quizCard .list-group .list-group-item {
+  background-color: var(--c0);
+  display: flex;
+}
+#quizMenuPlay {
+  padding: 1.1em;
+  background-color: var(--cX);
+  transition: all 0.2s;
+}
+#quizMenuPlay:active {
+  transform: scale(0.85);
+  background-color: var(--c1);
+}
+.hashtagAreaDiv {
+  border: thin solid var(--c0);
+  text-align: left;
+  transition: all 0.3s;
+}
+.hashtagAreaDiv:hover,
+.dropImage:hover {
+  opacity: 0.5;
+  background-color: var(--c0);
+}
+.quizMenuContainer {
+  position: relative;
+}
+.moveBtnLeft,
+.moveBtnRight {
+  --btnheight: 30%;
+  display: flex;
+  position: absolute;
+  top: calc(60% - var(--btnheight));
+  height: var(--btnheight);
+  justify-content: center;
+  align-items: center;
+  border-radius: 4pt;
+  z-index: 2000;
+}
+.moveBtnLeft {
+  left: 1%;
+}
+.moveBtnRight {
+  right: 1%;
+}
+.playListQuiz,
+.quizUsername,
+.playlistUsername {
+  transition: all 0.3s;
+}
+.playListQuiz:hover {
+  transform: translateX(10px);
+  background-color: var(--cI);
+  color: var(--cI);
+}
+.quizUsername:hover,
+.playlistUsername:hover {
+  background-color: var(--cX);
+}
+.formRadioContainer input:checked ~ #userColChoiceA {
+  background-color: var(--cA);
+}
+.formRadioContainer input:checked ~ #userColChoiceB {
+  background-color: var(--cB);
+}
+.formRadioContainer input:checked ~ #userColChoiceC {
+  background-color: var(--cC);
+}
+.formRadioContainer input:checked ~ #userColChoiceD {
+  background-color: var(--cD);
+}
+.formRadioContainer input:checked ~ #userColChoiceE {
+  background-color: var(--cE);
+}
+.formRadioContainer input:checked ~ #userColChoiceF {
+  background-color: var(--cF);
+}
+.formRadioContainer:hover input ~ #userColChoiceA {
+  background-color: var(--pA);
+}
+.formRadioContainer:hover input ~ #userColChoiceB {
+  background-color: var(--pB);
+}
+.formRadioContainer:hover input ~ #userColChoiceC {
+  background-color: var(--pC);
+}
+.formRadioContainer:hover input ~ #userColChoiceD {
+  background-color: var(--pD);
+}
+.formRadioContainer:hover input ~ #userColChoiceE {
+  background-color: var(--pE);
+}
+.formRadioContainer:hover input ~ #userColChoiceF {
+  background-color: var(--pF);
+}
+.userShapeRadioChoice {
+  color: var(--cI);
+}
+.formRadioContainer input:checked ~ .userShapeRadioChoice {
+  color: var(--c0);
+}
+.userShapeElem {
+  position: relative;
+  --size: 60pt;
+  transform: rotate(15deg);
+  width: var(--size);
+  height: var(--size);
+}
+@media (min-width: 576px) {
+  .scrollAssist {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  body {
+    overflow-y: auto;
+  }
+  .homeContainer {
+    object-fit: contain;
+  }
+}
+@media (min-width: 768px) {
+  .scrollAssist {
+    display: inline-block;
+    width: 47%;
+  }
+  .homeContainer {
+    object-fit: contain;
+    overflow: hidden;
+  }
+}
+@media (min-width: 992px) {
+  .homeContainer {
+    object-fit: contain;
+  }
+  .signUpBtn {
+    transform: translateX(60px);
+  }
+  .signUpBtn:hover {
+    transform: translateX(0px);
+  }
+  .signUpText {
+    display: inline-block;
+    transform: translate(-10px) scaleX(0);
+    width: 0;
+    transform-origin: left;
+    transition: all 0.4s;
+  }
+  .signUpBtn:hover .signUpText {
+    margin-right: 1.1em;
+    width: 50px;
+    transform: translate(0px) scaleX(1);
+  }
+}
+.popUpArea {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  z-index: 5000;
+}
+.popUpOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5001;
+}
+.popUpBox {
+  display: inline-block;
+  position: relative;
+  top: -100px;
+  opacity: 0;
+  width: 50%;
+  color: var(--c0);
+  z-index: 5002;
+}
+.popUpBox .popUpBtnClose {
+  position: absolute;
+  display: flex;
+  --thisOffset: 16pt;
+  right: var(--thisOffset);
+  top: var(--thisOffset);
+}
+.putAtBottom {
+  position: absolute;
+  bottom: 0px;
+}
+.bb {
+  border: thin solid green;
+}
+.dontShow {
+  display: none !important;
+}
+.centerFlexCont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.playBar {
+  display: inline-block;
+  position: relative;
+  padding: 8pt;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  background-color: var(--c0);
+}
+.playBar-progress {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  height: 10pt;
+  width: 30%;
+  background-color: var(--cI);
+  transition: all 0.3s;
+}
+.playBar-bar {
+  background-color: var(--cX);
+}
+.playBar-node {
+  display: inline-block;
+  position: absolute;
+  border-radius: 100%;
+  width: 1.5em;
+  height: 1.5em;
+  left: 30%;
+  right: auto;
+  background-color: var(--cI);
+  transition: all 0.3s;
+}
+.fixWrap {
+}
+.answerDivContainer {
+  max-height: 100pt;
+}
+.formRadioContainer {
+  position: static;
+  display: inline-block;
+  top: auto;
+  left: auto;
+}
+.display-flex {
+  display: flex;
+}
+.display-inline-flex {
+  display: inline-flex;
+}
+.barrCont {
+  display: inline-flex;
+  height: 400pt;
+  width: 400pt;
+  position: relative;
+  bottom: 1em;
+  justify-content: center;
+  align-content: flex-end;
+  align-items: flex-end;
+}
+.barr {
+  display: inline-flex;
+  padding: 2pt;
+  margin: 1.5pt;
+  width: 40pt;
+  height: 20pt;
+  background-color: var(--c2);
+  transform-origin: bottom;
+}
+.sectionCard .card,
+.sectionCard {
+  background-color: transparent;
+}
+.answerDiv {
+  transition: all 0.3s;
+}
+.answerDiv:hover {
+  transform: scale(1.055);
+}

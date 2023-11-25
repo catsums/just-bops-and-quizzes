@@ -1,0 +1,86 @@
+.innerPage {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+.homeContainer {
+  background: url(../img/gradient\ bg.png);
+  overflow-y: auto;
+}
+.splashLogo {
+  display: inline-block;
+  background: url(../img/logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  vertical-align: middle;
+}
+.splashInfo,
+.splashLogIn {
+  background-color: var(--c6);
+}
+.scrollAssist {
+  border-radius: 20px;
+  height: 4%;
+  width: 49%;
+  position: fixed;
+  transition: background-color 0.5s;
+  z-index: 200;
+}
+.scrollAssist:hover {
+  background-color: var(--c4);
+}
+.signupRing {
+  --size: 10vh;
+  border-radius: 100%;
+  width: var(--size);
+  height: var(--size);
+  transition: all 0.3s;
+}
+.signupRing:hover {
+  transform: scale(1.3);
+}
+.signupRing:active,
+.signupRing:active .signupRing:hover {
+  transform: scale(1.9);
+}
+@media (min-width: 576px) {
+  .scrollAssist {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .homeContainer {
+    overflow-y: auto;
+    height: 100vh;
+    object-fit: contain;
+  }
+}
+@media (min-width: 768px) {
+  .scrollAssist {
+    display: inline-block;
+    width: 47%;
+  }
+  .homeContainer {
+    height: 95vh;
+    object-fit: contain;
+    overflow: hidden;
+  }
+}
+@media (min-width: 992px) {
+  .homeContainer {
+    object-fit: contain;
+  }
+  .signUpText {
+    display: inline-block;
+    transform: translate(-10px) scaleX(0);
+    width: 0;
+    transform-origin: left;
+    transition: all 0.4s;
+  }
+  .signUpBtn:hover .signUpText {
+    margin-right: 1.1em;
+    width: 50px;
+    transform: translate(0px) scaleX(1);
+  }
+}

@@ -1,0 +1,126 @@
+//underscore means new data
+let db = {
+	quizzes:{
+		id:'String(8)',
+		name:'String(30)',
+		description:'String(100)',
+		userID:'String(8)',
+		imageURL:'String(100)',
+		passingGrade:'Int(11)',
+		// _ratings:'Array<Int>',
+		// _category:'String(8)',
+		// _lesson:'String(1024)',
+		hashtags:'Array<String>',
+		questions:[
+			'Array<JSON>',
+			{
+				question:'String()',
+				imageURL: 'String(32)',
+				answers:[
+					'Array<JSON>',
+					{
+						answer:'String()',
+						correct:'Bool'
+					},
+				]
+			},
+		],
+	},
+	users:{
+		id:'String(8)',
+		username:'String(30)',
+		firstname:'String(30)',
+		lastname:'String(30)',
+		password:'String(30)',
+		DOB:'Date',
+		email:'String(40)',
+		imageURL:'String(100)',
+		roleID:'String(8)',
+		_score:'Int',
+		_description:'String(100)',
+		friendlist:'Array<String>',
+		_following:'Array<String>',
+		_followers:'Array<String>',
+		preferences:{
+			$type:'JSON',
+			color:'String(A|B|C|D|E|F)',
+			shape:'String(A|B|C|D|E|F)'
+		},
+		secretkey: 'String(40)',
+		dateCreated: 'Date',
+	},
+	songs:{
+		id:'String(8)',
+		title:'String(30)',
+		author:'String(30)',
+		songURL:'String(100)',
+		bpm:'Int(6)',
+		measure:'Int(6)',
+		userID:'String(8)',
+		userCount:'Int(11)',
+		dateAdded:'Date',
+	},
+	roles:{
+		id:'String(8)',
+		name:'String(20)',
+		permissions:{
+			$type:'JSON',
+			user:{
+				create:'Bool',
+				edit:'Bool',
+				delete:'Bool',
+			},
+			song:{
+				create:'Bool',
+				edit:'Bool',
+				delete:'Bool',
+			},
+			quiz:{
+				create:'Bool',
+				edit:'Bool',
+				delete:'Bool',
+			}
+		}
+	},
+	lists:{
+		id:'String(8)',
+		name:'String(30)',
+		description:'String(100)',
+		quizzes:'Array<String>',
+		userID:'String(8)',
+		imageURL:'String(100)',
+		dateCreated:'Date',
+	},
+	hashtags:{
+		id:'String(8)',
+		tagName:'String(100)',
+		tagCount:'Int(11)',
+		dateCreated:'Date',
+	},
+	apikeys:{
+		id:'String(8)',
+		apikey:'String(40)',
+		userID:'String(8)'
+	},
+	_activity:{
+		id:'String(8)',
+		userID: 'String(8)',
+		type:'String(Create Quiz|Played Quiz|Completed Quiz|Create Playlist|Add Song|Friend Request|Added Friend|Following|Maxed Score)',
+		info:'String(1024)',
+		details:{
+			$type:'JSON',
+			quizID:'String(8)',
+			friendID:'String(8)',
+			listID:'String(8)',
+			songID:'String(8)',
+			score:'Int(11)',
+		},
+	},
+	/*_category:{
+		id:'String(8)',
+		name: 'String(100)',
+		dateCreated:'Date',
+		count:'Int(11)',
+		userID:'String(8)',
+	}*/
+}
