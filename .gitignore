@@ -76,4 +76,5 @@ typings/
 .fusebox/
 
 # Config
-config.js
+config.ts
+**/config.ts
